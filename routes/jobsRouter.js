@@ -1,65 +1,97 @@
 const express = require('express');
-const cuid = require('cuid');
 const router = express.Router();
-let jobs = require('../data/dummyJobs');
+const Job = require('../data/model/Job');
 
 
-//GET jobs listing
+/**
+ * @route   GET jobs/
+ * @desc    Get all the jobs
+ */
 router.get('/', (req, res, next) => {
-    res.json(jobs);
+    Job.find().exec()
+        .then(docs => {
+            res.json({jobs: docs});
+        })
+        .catch(err => {
+            res.status(400).json({msg: err});
+        });
 });
 
-//GET job by id
+/**
+ * @route   GET jobs/:id
+ * @desc    Get a job by id
+ */
 router.get('/:id', (req, res, next) => {
-    const job = jobs.find(it => it.id === req.params.id);
-    if (job)
-        res.json(job);
-    else
-        res.status(400).json({msg: `No job with the id of ${req.params.id}`});
+    const id = req.params.id;
+    Job.findById(id).exec()
+        .then(doc => {
+            if (doc) {
+                res.json({job: doc});
+            } else {
+                res.status(404).json({msg: 'No valid entry found for provided id'});
+            }
+        })
+        .catch(err => {
+            res.status(400).json({msg: err});
+        });
 });
 
-//Create new job
+/**
+ * @route   POST jobs/
+ * @desc    Create a new job
+ */
 router.post('/', (req, res) => {
-    const newJob = {
-        id: cuid(),
+    const newJob = new Job({
         title: req.body.title,
         venue: req.body.venue,
         date: req.body.date
-    };
+    });
 
-    if (!newJob.title || !newJob.venue || !newJob.date)
-        return res.status(400).json({msg: 'Please complete missing input'});
-
-    jobs.push(newJob);
-    res.json(jobs);
+    newJob.save()
+        .then(result => {
+            res.json({job: newJob});
+        })
+        .catch(err => {
+            res.status(400).json({msg: err});
+        });
 });
 
-//Update job
-router.put('/:id', (req, res) => {
-    const job = jobs.find(it => it.id === req.params.id);
-    if (job) {
-        const updatedField = req.body;
+/**
+ * @route   PUT jobs/:id
+ * @desc    Update an existing job
+ */
+router.patch('/:id', (req, res) => {
+    const id = req.params.id;
+    const updateField = {};
 
-        if (updatedField.title)
-            job.title = updatedField.title;
-        if (updatedField.venue)
-            job.venue = updatedField.venue;
-        if (updatedField.date)
-            job.date = updatedField.date;
+    for (const key in req.body) {
+        if (req.body.hasOwnProperty(key)) {
+            updateField[key] = req.body[key];
+        }
+    }
 
-        res.json({msg: 'Job updated', job});
-    } else
-        res.status(400).json({msg: `No job with the id of ${req.params.id}`});
+    Job.update({_id: id}, {$set: updateField}).exec()
+        .then(result => {
+            res.json(result);
+        })
+        .catch(err => {
+            res.status(400).json({msg: err});
+        });
 });
 
-//Delete Job
+/**
+ * @route   DELETE jobs/:id
+ * @desc    Delete an existing job
+ */
 router.delete('/:id', (req, res, next) => {
-    const job = jobs.find(it => it.id === req.params.id);
-    if (job) {
-        jobs = jobs.filter(it => it.id !== req.params.id);
-        res.json({msg: 'Job deleted', jobs});
-    } else
-        res.status(400).json({msg: `No job with the id of ${req.params.id}`});
+    const id = req.params.id;
+    Job.remove({_id: id}).exec()
+        .then(result => {
+            res.json({msg: result});
+        })
+        .catch(err => {
+            res.status(400).json({msg: err});
+        });
 });
 
 module.exports = router;

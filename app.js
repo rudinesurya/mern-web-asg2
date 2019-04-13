@@ -1,8 +1,18 @@
 const createError = require('http-errors');
 const express = require('express');
+const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+
+
+//db config
+const dbUri = require('./keys/devKeys').mongoURI;
+//connect to db
+mongoose.connect(dbUri)
+    .then(() => console.log('MongoDB connected'))
+    .catch(err => console.log(err));
+
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
