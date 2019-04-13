@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Job = require('../data/model/Job');
+const Job = require('../model/Job');
 
 
 /**
@@ -13,7 +13,8 @@ router.get('/', (req, res, next) => {
             res.json({jobs: docs});
         })
         .catch(err => {
-            res.status(400).json({msg: err});
+            console.log(err);
+            res.status(400).json(err);
         });
 });
 
@@ -28,11 +29,12 @@ router.get('/:id', (req, res, next) => {
             if (doc) {
                 res.json({job: doc});
             } else {
-                res.status(404).json({msg: 'No valid entry found for provided id'});
+                res.status(404).json('No valid entry found for provided id');
             }
         })
         .catch(err => {
-            res.status(400).json({msg: err});
+            console.log(err);
+            res.status(400).json(err);
         });
 });
 
@@ -49,10 +51,11 @@ router.post('/', (req, res) => {
 
     newJob.save()
         .then(result => {
-            res.json({job: newJob});
+            res.json(result);
         })
         .catch(err => {
-            res.status(400).json({msg: err});
+            console.log(err);
+            res.status(400).json(err);
         });
 });
 
@@ -75,7 +78,8 @@ router.patch('/:id', (req, res) => {
             res.json(result);
         })
         .catch(err => {
-            res.status(400).json({msg: err});
+            console.log(err);
+            res.status(400).json(err);
         });
 });
 
@@ -87,10 +91,11 @@ router.delete('/:id', (req, res, next) => {
     const id = req.params.id;
     Job.remove({_id: id}).exec()
         .then(result => {
-            res.json({msg: result});
+            res.json(result);
         })
         .catch(err => {
-            res.status(400).json({msg: err});
+            console.log(err);
+            res.status(400).json(err);
         });
 });
 

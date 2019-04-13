@@ -1,15 +1,20 @@
+require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const mongoose = require('mongoose');
+const passport = require('./config/passport'); // import passport configured with JWT strategy​
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
+const {MONGO_URI} = process.env;
 
 //db config
-const dbUri = require('./keys/devKeys').mongoURI;
 //connect to db
-mongoose.connect(dbUri)
+mongoose.connect(MONGO_URI, {
+    useCreateIndex: true,
+    useNewUrlParser: true
+})
     .then(() => console.log('MongoDB connected'))
     .catch(err => console.log(err));
 
@@ -29,6 +34,9 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+//Passport middleware
+app.use(passport.initialize());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
