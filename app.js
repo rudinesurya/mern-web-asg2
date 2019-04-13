@@ -15,7 +15,7 @@ mongoose.connect(dbUri)
 
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/usersRouter');
 const jobsRouter = require('./routes/jobsRouter');
 
 const app = express();
