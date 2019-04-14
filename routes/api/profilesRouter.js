@@ -7,6 +7,7 @@ const profileValidator = require('../../validators/profileValidator');
 /**
  * @route   GET api/profiles
  * @desc    Get all user profiles
+ * @access: public
  */
 router.get('/', (req, res) => {
   const errors = {};
@@ -29,6 +30,7 @@ router.get('/', (req, res) => {
 /**
  * @route   GET api/profiles/current
  * @desc    Get current user profile if it exists
+ * @access: private
  */
 router.get('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
   const errors = {};
@@ -51,6 +53,7 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
 /**
  * @route   GET api/profiles/:handle
  * @desc    Get user profile by handle if it exists
+ * @access: public
  */
 router.get('/:handle', (req, res) => {
   const errors = {};
@@ -73,6 +76,7 @@ router.get('/:handle', (req, res) => {
 /**
  * @route   POST api/profiles/current
  * @desc    Create or update user profile
+ * @access: private
  */
 router.post('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
   const { errors, isValid } = profileValidator(req.body);

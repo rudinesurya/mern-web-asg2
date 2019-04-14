@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-const passport = require('./config/passport'); // import passport configured with JWT strategy
+const passport = require('./auth/passport'); // import passport configured with JWT strategy
 
 const { MONGO_URI } = process.env;
 

@@ -1,10 +1,12 @@
 const router = require('express').Router();
+const passport = require('passport');
 const Job = require('../../model/Job');
 
 
 /**
  * @route   GET api/jobs/
  * @desc    Get all the jobs
+ * @access: public
  */
 router.get('/', (req, res) => {
   Job.find().exec().then(docs => res.json({ jobs: docs })).catch((err) => {
@@ -16,11 +18,12 @@ router.get('/', (req, res) => {
 /**
  * @route   GET api/jobs/:id
  * @desc    Get a job by id
+ * @access: public
  */
-router.get('/:id', (req, res) => {
+router.get('/:jobId', (req, res) => {
   const errors = {};
-  const { id } = req.params.id;
-  Job.findById(id).exec().then((doc) => {
+  const { jobId } = req.params;
+  Job.findById(jobId).then((doc) => {
     if (doc) {
       res.json({ job: doc });
     } else {
@@ -36,9 +39,11 @@ router.get('/:id', (req, res) => {
 /**
  * @route   POST api/jobs/
  * @desc    Create a new job
+ * @access: private
  */
-router.post('/', (req, res) => {
+router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
   const newJob = new Job({
+    host: req.user.id,
     title: req.body.title,
     venue: req.body.venue,
     date: req.body.date,
@@ -53,20 +58,29 @@ router.post('/', (req, res) => {
 /**
  * @route   PUT api/jobs/:id
  * @desc    Update an existing job
+ * @access: private
  */
-router.patch('/:id', (req, res) => {
-  const { id } = req.params;
-  const updateField = {};
+router.patch('/:jobId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const errors = {};
+  const { jobId } = req.params;
 
-  req.body.forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-      updateField[key] = req.body[key];
-    }
-  });
+  Job.findById(jobId)
+    .then((job) => {
+      if (job.host.toString() !== req.user.id) {
+        errors.auth = 'User not authorized to delete job.';
+        res.status(401).json(errors);
+      }
 
-  Job.update({ _id: id }, { $set: updateField })
-    .exec()
-    .then(result => res.json(result))
+      // Authorized
+      const updateField = {};
+      for (const key in req.body) {
+        if (Object.prototype.hasOwnProperty.call(req.body, key)) {
+          updateField[key] = req.body[key];
+        }
+      }
+
+      job.update(updateField).then(result => res.json(result));
+    })
     .catch((err) => {
       console.log(err);
       res.status(400).json(err);
@@ -76,13 +90,28 @@ router.patch('/:id', (req, res) => {
 /**
  * @route   DELETE api/jobs/:id
  * @desc    Delete an existing job
+ * @access: private
  */
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  Job.remove({ _id: id }).exec().then(result => res.json(result)).catch((err) => {
-    console.log(err);
-    res.status(400).json(err);
-  });
+router.delete('/:jobId', passport.authenticate('jwt', { session: false }), (req, res) => {
+  const errors = {};
+  const { jobId } = req.params;
+
+  Job.findById(jobId)
+    .then((job) => {
+      console.log(jobId);
+      if (job.host.toString() !== req.user.id) {
+        errors.auth = 'User not authorized to delete job.';
+        res.status(401).json(errors);
+      }
+
+      // Authorized
+      job.remove().then(result => res.json(result));
+      // job.remove().then(result => res.json(result));
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json(err);
+    });
 });
 
 module.exports = router;
