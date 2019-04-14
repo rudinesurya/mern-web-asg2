@@ -10,10 +10,10 @@ const registerValidator = data => {
     data.password = !_.isEmpty(data.password) ? data.password : '';
     data.password2 = !_.isEmpty(data.password2) ? data.password2 : '';
 
-    if (!validator.isLength(data.name, {min: 4, max: 20}))
-        errors.name = 'Name must be between 4 and 20 characters';
-    if (!validator.isLength(data.password, {min: 6, max: 10}))
-        errors.password = 'Password must be at least 6 characters';
+    if (!validator.isLength(data.name, {min: 3, max: 20}))
+        errors.name = 'Name must be between 3 and 20 characters';
+    if (!validator.isLength(data.password, {min: 3, max: 10}))
+        errors.password = 'Password must be at least 3 characters';
 
     if (!validator.isEmail(data.email))
         errors.email = 'Email format is invalid';

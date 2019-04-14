@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const Job = require('../model/Job');
+const Job = require('../../model/Job');
 
 
 /**
- * @route   GET jobs/
+ * @route   GET api/jobs/
  * @desc    Get all the jobs
  */
 router.get('/', (req, res, next) => {
     Job.find().exec()
-        .then(docs => {
-            res.json({jobs: docs});
-        })
+        .then(docs => res.json({jobs: docs}))
         .catch(err => {
             console.log(err);
             res.status(400).json(err);
@@ -19,17 +17,19 @@ router.get('/', (req, res, next) => {
 });
 
 /**
- * @route   GET jobs/:id
+ * @route   GET api/jobs/:id
  * @desc    Get a job by id
  */
 router.get('/:id', (req, res, next) => {
+    const errors = {};
     const id = req.params.id;
     Job.findById(id).exec()
         .then(doc => {
             if (doc) {
                 res.json({job: doc});
             } else {
-                res.status(404).json('No valid entry found for provided id');
+                errors.job = 'No valid entry found for provided id';
+                res.status(404).json(errors);
             }
         })
         .catch(err => {
@@ -39,7 +39,7 @@ router.get('/:id', (req, res, next) => {
 });
 
 /**
- * @route   POST jobs/
+ * @route   POST api/jobs/
  * @desc    Create a new job
  */
 router.post('/', (req, res) => {
@@ -50,9 +50,7 @@ router.post('/', (req, res) => {
     });
 
     newJob.save()
-        .then(result => {
-            res.json(result);
-        })
+        .then(result => res.json(result))
         .catch(err => {
             console.log(err);
             res.status(400).json(err);
@@ -60,7 +58,7 @@ router.post('/', (req, res) => {
 });
 
 /**
- * @route   PUT jobs/:id
+ * @route   PUT api/jobs/:id
  * @desc    Update an existing job
  */
 router.patch('/:id', (req, res) => {
@@ -74,9 +72,7 @@ router.patch('/:id', (req, res) => {
     }
 
     Job.update({_id: id}, {$set: updateField}).exec()
-        .then(result => {
-            res.json(result);
-        })
+        .then(result => res.json(result))
         .catch(err => {
             console.log(err);
             res.status(400).json(err);
@@ -84,15 +80,13 @@ router.patch('/:id', (req, res) => {
 });
 
 /**
- * @route   DELETE jobs/:id
+ * @route   DELETE api/jobs/:id
  * @desc    Delete an existing job
  */
 router.delete('/:id', (req, res, next) => {
     const id = req.params.id;
     Job.remove({_id: id}).exec()
-        .then(result => {
-            res.json(result);
-        })
+        .then(result => res.json(result))
         .catch(err => {
             console.log(err);
             res.status(400).json(err);

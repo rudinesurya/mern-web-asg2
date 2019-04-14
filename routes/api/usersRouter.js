@@ -1,31 +1,32 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../model/User');
+const User = require('../../model/User');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const registerValidator = require('../validators/registerValidator');
-const loginValidator = require('../validators/loginValidator');
+const registerValidator = require('../../validators/registerValidator');
+const loginValidator = require('../../validators/loginValidator');
 
 const {SECRET} = process.env;
 
 
 /**
- * @route:  POST users/register
+ * @route:  POST api/users/register
  * @desc:   register a new user
  */
 router.post('/register', (req, res) => {
     const {name, email, password} = req.body;
     const {errors, isValid} = registerValidator(req.body);
     if (!isValid)
-        return res.status(400).json(errors);
+        res.status(400).json(errors);
 
     User.findOne({email})
         .then(user => {
-            if (user)
-                return res.status(400).json('Email already exists');
-            else {
+            if (user) {
+                errors.email = 'Email already exists';
+                res.status(400).json(errors);
+            } else {
                 const avatarUrl = gravatar.url(email, {
                     s: '200',
                     r: 'pg',
@@ -51,7 +52,6 @@ router.post('/register', (req, res) => {
                                 console.log(err);
                                 res.json(err);
                             });
-
                     });
                 });
             }
@@ -59,19 +59,21 @@ router.post('/register', (req, res) => {
 });
 
 /**
- * @route:  POST users/login
+ * @route:  POST api/users/login
  * @desc:   login user
  */
 router.post('/login', (req, res) => {
     const {email, password} = req.body;
     const {errors, isValid} = loginValidator(req.body);
     if (!isValid)
-        return res.status(400).json(errors);
+        res.status(400).json(errors);
 
     User.findOne({email})
         .then(user => {
-            if (!user)
-                return res.status(401).json('Authentication failed. User not found.');
+            if (!user) {
+                errors.email = 'Authentication failed. User not found.';
+                res.status(401).json(errors);
+            }
 
             //Check password
             bcrypt.compare(password, user.password)
@@ -90,26 +92,28 @@ router.post('/login', (req, res) => {
                                 token: 'BEARER ' + token
                             });
                         });
-                    } else
-                        return res.status(401).json('Authentication failed. Wrong password.');
+                    } else {
+                        errors.password = 'Authentication failed. Wrong password.';
+                        res.status(401).json(errors);
+                    }
                 })
-                .catch(err =>
-                    console.log(err)
-                );
+                .catch(err => {
+                    console.log(err);
+                    res.status(401).json(err);
+                });
         });
 });
 
 /**
- * @route:  GET users/current
+ * @route:  GET api/users/current
  * @desc:   get current user
  */
 router.get('/current',
     passport.authenticate('jwt', {session: false}),
     (req, res) => {
-        const {id, name, email} = req.user;
+        const {id, email} = req.user;
         res.json({
             id,
-            name,
             email
         });
     });

@@ -19,9 +19,10 @@ mongoose.connect(MONGO_URI, {
     .catch(err => console.log(err));
 
 
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/usersRouter');
-const jobsRouter = require('./routes/jobsRouter');
+const indexRouter = require('./routes/api');
+const usersRouter = require('./routes/api/usersRouter');
+const profilesRouter = require('./routes/api/profilesRouter');
+const jobsRouter = require('./routes/api/jobsRouter');
 
 const app = express();
 
@@ -39,8 +40,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/jobs', jobsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/profiles', profilesRouter);
+app.use('/api/jobs', jobsRouter);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

@@ -8,8 +8,8 @@ const loginValidator = data => {
     data.email = !_.isEmpty(data.email) ? data.email : '';
     data.password = !_.isEmpty(data.password) ? data.password : '';
 
-    if (!validator.isLength(data.password, {min: 6, max: 10}))
-        errors.password = 'Password must be at least 6 characters';
+    if (!validator.isLength(data.password, {min: 3, max: 10}))
+        errors.password = 'Password must be at least 3 characters';
 
     if (!validator.isEmail(data.email))
         errors.email = 'Email format is invalid';

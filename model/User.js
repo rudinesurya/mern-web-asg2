@@ -16,14 +16,12 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    bio: {
-        type: String,
-        default: ''
-    },
     avatarUrl: {
         type: String,
         default: ''
     },
+
+
     date: {
         type: Date,
         default: Date.now()
