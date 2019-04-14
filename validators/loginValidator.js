@@ -2,28 +2,26 @@ const validator = require('validator');
 const _ = require('lodash');
 
 
-const loginValidator = data => {
-    let errors = {};
+const loginValidator = (data) => {
+  const tdata = data;
+  const errors = {};
 
-    data.email = !_.isEmpty(data.email) ? data.email : '';
-    data.password = !_.isEmpty(data.password) ? data.password : '';
+  tdata.email = !_.isEmpty(tdata.email) ? tdata.email : '';
+  tdata.password = !_.isEmpty(tdata.password) ? tdata.password : '';
 
-    if (!validator.isLength(data.password, {min: 3, max: 10}))
-        errors.password = 'Password must be at least 3 characters';
+  if (!validator.isLength(tdata.password,
+    { min: 3, max: 10 })) errors.password = 'Password must be at least 3 characters';
 
-    if (!validator.isEmail(data.email))
-        errors.email = 'Email format is invalid';
+  if (!validator.isEmail(tdata.email)) errors.email = 'Email format is invalid';
 
-    //highest priority
-    if (validator.isEmpty(data.email))
-        errors.email = 'Email field is required';
-    if (validator.isEmpty(data.password))
-        errors.password = 'Password field is required';
+  // highest priority
+  if (validator.isEmpty(tdata.email)) errors.email = 'Email field is required';
+  if (validator.isEmpty(tdata.password)) errors.password = 'Password field is required';
 
-    return {
-        errors,
-        isValid: _.isEmpty(errors)
-    };
+  return {
+    errors,
+    isValid: _.isEmpty(errors),
+  };
 };
 
 module.exports = loginValidator;

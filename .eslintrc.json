@@ -1,0 +1,11 @@
+{
+  "extends": [
+    "airbnb"
+  ],
+  "rules": {
+    "no-console": "off",
+    "no-shadow": "off",
+    "no-use-before-define": "off",
+    "no-restricted-globals": "off"
+  }
+}
