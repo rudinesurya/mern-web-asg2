@@ -9,7 +9,7 @@ const profileValidator = data => {
     data.location = !_.isEmpty(data.location) ? data.location : '';
     data.bio = !_.isEmpty(data.bio) ? data.bio : '';
 
-    if (!validator.isLength(data.handle, {min: 3, max: 20}))
+    if (!validator.isLength(data.handle, {min: 3, max: 50}))
         errors.handle = 'Handle must be at least 3 characters';
     if (!validator.isLength(data.bio, {min: 3, max: 50}))
         errors.bio = 'Bio must be at least 3 characters';

@@ -9,9 +9,8 @@ const UserProfileSchema = new Schema({
     },
     handle: {
         type: String,
-        required: true,
         min: 3,
-        max: 20
+        max: 50
     },
     location: {
         type: String,
@@ -20,12 +19,6 @@ const UserProfileSchema = new Schema({
     bio: {
         type: String,
         default: ''
-    },
-
-
-    date: {
-        type: Date,
-        default: Date.now()
     }
 });
 

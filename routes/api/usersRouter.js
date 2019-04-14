@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../../model/User');
+const Profile = require('../../model/UserProfile');
 const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -13,7 +14,7 @@ const {SECRET} = process.env;
 
 /**
  * @route:  POST api/users/register
- * @desc:   register a new user
+ * @desc:   Register a new user
  */
 router.post('/register', (req, res) => {
     const {name, email, password} = req.body;
@@ -60,7 +61,7 @@ router.post('/register', (req, res) => {
 
 /**
  * @route:  POST api/users/login
- * @desc:   login user
+ * @desc:   Login user
  */
 router.post('/login', (req, res) => {
     const {email, password} = req.body;
@@ -79,7 +80,6 @@ router.post('/login', (req, res) => {
             bcrypt.compare(password, user.password)
                 .then(isMatch => {
                     if (isMatch) {
-
                         //Create the payload
                         const payload = {
                             id: user.id,
@@ -87,10 +87,25 @@ router.post('/login', (req, res) => {
                             email: user.email
                         };
                         jwt.sign(payload, SECRET, {expiresIn: 3600}, (err, token) => {
-                            res.json({
-                                success: true,
-                                token: 'BEARER ' + token
-                            });
+                            //Check if profile already exists
+                            const profileField = {
+                                user: user.id,
+                                handle: user.id,
+                                lastLogin: Date.now()
+                            };
+                            Profile.findOne({user: user.id})
+                                .then(profile => {
+                                    if (profile) {
+                                        Profile.findOneAndUpdate({user: user.id}, {$set: profileField}, {new: true});
+                                    } else {
+                                        new Profile(profileField).save();
+                                    }
+
+                                    res.json({
+                                        success: true,
+                                        token: 'BEARER ' + token
+                                    });
+                                });
                         });
                     } else {
                         errors.password = 'Authentication failed. Wrong password.';
@@ -106,7 +121,7 @@ router.post('/login', (req, res) => {
 
 /**
  * @route:  GET api/users/current
- * @desc:   get current user
+ * @desc:   Get current user
  */
 router.get('/current',
     passport.authenticate('jwt', {session: false}),
@@ -116,6 +131,19 @@ router.get('/current',
             id,
             email
         });
+    });
+
+/**
+ * @route:  DELETE api/users/current
+ * @desc:   Delete current user
+ */
+router.delete('/current',
+    passport.authenticate('jwt', {session: false}),
+    (req, res) => {
+        const {id, email} = req.user;
+        User.findOneAndRemove({_id: id})
+            .then(() => Profile.findOneAndRemove({user: id}))
+            .then(() => res.json({success: true}));
     });
 
 module.exports = router;

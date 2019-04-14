@@ -51,7 +51,7 @@ router.get('/current',
     });
 
 /**
- * @route   GET api/profiles/
+ * @route   GET api/profiles/:handle
  * @desc    Get user profile by handle if it exists
  */
 router.get('/:handle', (req, res) => {
@@ -73,10 +73,10 @@ router.get('/:handle', (req, res) => {
 });
 
 /**
- * @route   POST api/profiles
- * @desc    Create user profile
+ * @route   POST api/profiles/current
+ * @desc    Create or update user profile
  */
-router.post('/',
+router.post('/current',
     passport.authenticate('jwt', {session: false}),
     (req, res) => {
         const {errors, isValid} = profileValidator(req.body);
