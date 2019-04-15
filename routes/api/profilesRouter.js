@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const passport = require('passport');
 const Profile = require('../../model/UserProfile');
-const profileValidator = require('../../validators/profileValidator');
+const updateProfileValidator = require('../../validators/updateProfileValidator');
 
 
 /**
@@ -16,7 +16,7 @@ router.get('/', (req, res) => {
     .then((profiles) => {
       if (!profiles) {
         errors.profile = 'No user profiles found';
-        res.status(404).json(errors);
+        return res.status(404).json(errors);
       }
 
       res.json(profiles);
@@ -39,7 +39,7 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
     .then((profile) => {
       if (!profile) {
         errors.profile = 'No user profile found';
-        res.status(404).json(errors);
+        return res.status(404).json(errors);
       }
 
       res.json(profile);
@@ -62,7 +62,7 @@ router.get('/:handle', (req, res) => {
     .then((profile) => {
       if (!profile) {
         errors.profile = 'No user profile found';
-        res.status(404).json(errors);
+        return res.status(404).json(errors);
       }
 
       res.json(profile);
@@ -79,8 +79,8 @@ router.get('/:handle', (req, res) => {
  * @access: private
  */
 router.post('/current', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const { errors, isValid } = profileValidator(req.body);
-  if (!isValid) res.status(400).json(errors);
+  const { errors, isValid } = updateProfileValidator(req.body);
+  if (!isValid) return res.status(400).json(errors);
 
   const profileField = {};
 
@@ -93,6 +93,7 @@ router.post('/current', passport.authenticate('jwt', { session: false }), (req, 
   Profile.findOne({ user: req.user.id })
     .then((profile) => {
       if (profile) {
+        profileField.updatedDate = Date.now();
         Profile.findOneAndUpdate({ user: req.user.id }, { $set: profileField }, { new: true }).then(
           profile => res.json(profile),
         );

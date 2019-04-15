@@ -21,6 +21,14 @@ const UserProfileSchema = new Schema({
     type: String,
     default: '',
   },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedDate: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = mongoose.model('user profiles', UserProfileSchema);

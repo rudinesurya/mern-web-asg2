@@ -2,7 +2,7 @@ const validator = require('validator');
 const _ = require('lodash');
 
 
-const registerValidator = (data) => {
+const registerUserValidator = (data) => {
   const tdata = data;
   const errors = {};
 
@@ -36,4 +36,4 @@ const registerValidator = (data) => {
   };
 };
 
-module.exports = registerValidator;
+module.exports = registerUserValidator;

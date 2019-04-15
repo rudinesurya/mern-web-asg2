@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Comment = require('./Comment');
 
 const { Schema } = mongoose;
 
@@ -19,6 +20,26 @@ const JobSchema = new Schema({
   date: {
     type: String,
     required: true,
+  },
+
+  participants: [
+    {
+      user: {
+        type: Schema.Types.ObjectId,
+        ref: 'users',
+      },
+    },
+  ],
+
+  comments: [Comment],
+
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedDate: {
+    type: Date,
+    default: Date.now,
   },
 });
 

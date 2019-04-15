@@ -4,9 +4,19 @@
   ],
   "rules": {
     "no-console": "off",
+    "func-names": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",
     "no-restricted-globals": "off",
-    "no-restricted-syntax": "off"
+    "no-restricted-syntax": "off",
+    "consistent-return": "off",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allow": [
+          "_id"
+        ]
+      }
+    ]
   }
 }

@@ -2,7 +2,7 @@ const validator = require('validator');
 const _ = require('lodash');
 
 
-const loginValidator = (data) => {
+const loginUserValidator = (data) => {
   const tdata = data;
   const errors = {};
 
@@ -24,4 +24,4 @@ const loginValidator = (data) => {
   };
 };
 
-module.exports = loginValidator;
+module.exports = loginUserValidator;

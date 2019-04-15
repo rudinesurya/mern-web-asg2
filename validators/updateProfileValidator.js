@@ -2,7 +2,7 @@ const validator = require('validator');
 const _ = require('lodash');
 
 
-const profileValidator = (data) => {
+const updateProfileValidator = (data) => {
   const tdata = data;
   const errors = {};
 
@@ -26,4 +26,4 @@ const profileValidator = (data) => {
   };
 };
 
-module.exports = profileValidator;
+module.exports = updateProfileValidator;

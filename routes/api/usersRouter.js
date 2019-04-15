@@ -4,8 +4,8 @@ const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const User = require('../../model/User');
 const Profile = require('../../model/UserProfile');
-const registerValidator = require('../../validators/registerValidator');
-const loginValidator = require('../../validators/loginValidator');
+const registerUserValidator = require('../../validators/registerUserValidator');
+const loginUserValidator = require('../../validators/loginUserValidator');
 
 const { SECRET } = process.env;
 
@@ -17,36 +17,36 @@ const { SECRET } = process.env;
  */
 router.post('/register', (req, res) => {
   const { name, email, password } = req.body;
-  const { errors, isValid } = registerValidator(req.body);
-  if (!isValid) res.status(400).json(errors);
+  const { errors, isValid } = registerUserValidator(req.body);
+  if (!isValid) return res.status(400).json(errors);
 
   User.findOne({ email }).then((user) => {
     if (user) {
       errors.email = 'Email already exists';
-      res.status(400).json(errors);
-    } else {
-      const avatarUrl = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm',
-      });
-
-      const newUser = new User({
-        name,
-        email,
-        password,
-        avatarUrl,
-      });
-
-      // Save this user
-      newUser
-        .save()
-        .then(user => res.json(user))
-        .catch((err) => {
-          console.log(err);
-          res.json(err);
-        });
+      return res.status(400).json(errors);
     }
+
+    const avatarUrl = gravatar.url(email, {
+      s: '200',
+      r: 'pg',
+      d: 'mm',
+    });
+
+    const newUser = new User({
+      name,
+      email,
+      password,
+      avatarUrl,
+    });
+
+    // Save this user
+    newUser
+      .save()
+      .then(user => res.json(user))
+      .catch((err) => {
+        console.log(err);
+        res.json(err);
+      });
   });
 });
 
@@ -57,13 +57,13 @@ router.post('/register', (req, res) => {
  */
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const { errors, isValid } = loginValidator(req.body);
-  if (!isValid) res.status(400).json(errors);
+  const { errors, isValid } = loginUserValidator(req.body);
+  if (!isValid) return res.status(400).json(errors);
 
   User.findOne({ email }).then((user) => {
     if (!user) {
       errors.email = 'Authentication failed. User not found.';
-      res.status(401).json(errors);
+      return res.status(401).json(errors);
     }
 
     // Check password
@@ -72,37 +72,37 @@ router.post('/login', (req, res) => {
         console.log(err);
         res.status(401).json(err);
       }
-      if (isMatch) {
-        // Create the payload
-        const payload = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        };
-        jwt.sign(payload, SECRET, { expiresIn: 3600 }, (err, token) => {
-          // Check if profile already exists
-          const profileField = {
-            user: user.id,
-            handle: user.id,
-            lastLogin: Date.now(),
-          };
-          Profile.findOne({ user: user.id }).then((profile) => {
-            if (profile) {
-              Profile.findOneAndUpdate({ user: user.id }, { $set: profileField }, { new: true });
-            } else {
-              new Profile(profileField).save();
-            }
+      if (!isMatch) {
+        errors.password = 'Authentication failed. Wrong password.';
+        return res.status(401).json(errors);
+      }
 
-            res.json({
-              success: true,
-              token: `BEARER ${token}`,
-            });
+      // Create the payload
+      const payload = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      };
+      jwt.sign(payload, SECRET, { expiresIn: 36000 }, (err, token) => {
+        // Check if profile already exists
+        const profileField = {
+          user: user.id,
+          handle: user.id,
+          lastLogin: Date.now(),
+        };
+        Profile.findOne({ user: user.id }).then((profile) => {
+          if (profile) {
+            Profile.findOneAndUpdate({ user: user.id }, { $set: profileField }, { new: true });
+          } else {
+            new Profile(profileField).save();
+          }
+
+          res.json({
+            success: true,
+            token: `BEARER ${token}`,
           });
         });
-      } else {
-        errors.password = 'Authentication failed. Wrong password.';
-        res.status(401).json(errors);
-      }
+      });
     });
   });
 });

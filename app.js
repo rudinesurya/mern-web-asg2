@@ -19,7 +19,6 @@ mongoose.connect(MONGO_URI, {
   .catch(err => console.log(err));
 
 
-const indexRouter = require('./routes/api');
 const usersRouter = require('./routes/api/usersRouter');
 const profilesRouter = require('./routes/api/profilesRouter');
 const jobsRouter = require('./routes/api/jobsRouter');
@@ -39,7 +38,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Passport middleware
 app.use(passport.initialize());
 
-app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/profiles', profilesRouter);
 app.use('/api/jobs', jobsRouter);
