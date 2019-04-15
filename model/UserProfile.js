@@ -7,11 +7,13 @@ const UserProfileSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
+    required: true,
   },
   handle: {
     type: String,
     min: 3,
     max: 50,
+    required: true,
   },
   location: {
     type: String,

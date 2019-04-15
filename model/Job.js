@@ -1,13 +1,33 @@
 const mongoose = require('mongoose');
-const Comment = require('./Comment');
 
 const { Schema } = mongoose;
 
 // Create Schema
+const CommentSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  createdDate: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedDate: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
 const JobSchema = new Schema({
   host: {
     type: Schema.Types.ObjectId,
     ref: 'users',
+    required: true,
   },
   title: {
     type: String,
@@ -27,11 +47,12 @@ const JobSchema = new Schema({
       user: {
         type: Schema.Types.ObjectId,
         ref: 'users',
+        required: true,
       },
     },
   ],
 
-  comments: [Comment],
+  comments: [CommentSchema],
 
   createdDate: {
     type: Date,
