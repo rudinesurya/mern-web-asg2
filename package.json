@@ -4,10 +4,10 @@
   "private": true,
   "scripts": {
     "start": "node --exec babel-node server --require babel-core/register --require babel-polyfill",
-    "dev": "nodemon server",
+    "dev": "cross-env NODE_ENV=development nodemon server",
     "eslint": "eslint . --ext .js",
-    "unit-test": "cross-env NODE_ENV=test mocha ./tests/unit-tests/**/*.js --require babel-core/register --require babel-polyfill --exit || true",
-    "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --require babel-core/register --require babel-polyfill --exit || true"
+    "unit-test": "cross-env NODE_ENV=test mocha ./tests/unit-tests/**/*.js --exit || true",
+    "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --exit || true"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

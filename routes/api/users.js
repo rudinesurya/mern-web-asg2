@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
   const { user, error, errorMsg } = await auth.registerUser(req.body);
 
   if (error) return res.status(400).json(errorMsg);
-  res.json(user);
+  res.status(201).json(user);
 });
 
 /**
@@ -22,7 +22,8 @@ router.post('/', async (req, res) => {
  * @access: public
  */
 router.post('/login', async (req, res) => {
-  const { token, user } = await auth.loginUser(req.body);
+  const { token, user, error, errorMsg } = await auth.loginUser(req.body);
+  if (error) return res.status(400).json(errorMsg);
   // Create a user profile if a new user logged in
   auth.createProfileIfNew(user);
   res.json(token);

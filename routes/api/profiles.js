@@ -18,7 +18,8 @@ router.get('/', async (req, res) => {
  * @access: private
  */
 router.get('/current', passport, async (req, res) => {
-  const { doc } = await profiles.getDocByUserId(req.user._id);
+  const { doc, error, errorMsg } = await profiles.getDocByUserId(req.user._id);
+  if (error) return res.status(404).json(errorMsg);
   res.json(doc);
 });
 
@@ -28,7 +29,8 @@ router.get('/current', passport, async (req, res) => {
  * @access: public
  */
 router.get('/:handle', async (req, res) => {
-  const { doc } = await profiles.getDocByHandle(req.params.handle);
+  const { doc, error, errorMsg } = await profiles.getDocByHandle(req.params.handle);
+  if (error) return res.status(404).json(errorMsg);
   res.json(doc);
 });
 
@@ -38,7 +40,8 @@ router.get('/:handle', async (req, res) => {
  * @access: private
  */
 router.post('/current', passport, async (req, res) => {
-  const { result } = await profiles.updateDocByUserId(req.user._id, req.body);
+  const { result, error, errorMsg } = await profiles.updateDocByUserId(req.user._id, req.body);
+  if (error) return res.status(400).json(errorMsg);
   res.json(result);
 });
 

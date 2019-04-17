@@ -18,6 +18,7 @@ module.exports.getDocById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
       const doc = await Job.findById(id);
+      if (!doc) return resolve({ error: true, errorMsg: 'Job not found.' });
       resolve({ doc });
     } catch (err) {
       reject(err);
@@ -29,6 +30,7 @@ module.exports.getDocByHandle = function (handle) {
   return new Promise(async (resolve, reject) => {
     try {
       const doc = await Job.findOne({ handle });
+      if (!doc) return resolve({ error: true, errorMsg: 'Job not found.' });
       resolve({ doc });
     } catch (err) {
       reject(err);

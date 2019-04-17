@@ -19,6 +19,7 @@ module.exports.getDocById = function (id) {
     try {
       const doc = await Profile.findById(id)
         .populate('user', ['name', 'email', 'avatarUrl']);
+      if (!doc) return resolve({ error: true, errorMsg: 'Profile not found.' });
       resolve({ doc });
     } catch (err) {
       reject(err);
@@ -31,6 +32,7 @@ module.exports.getDocByUserId = function (userId) {
     try {
       const doc = await Profile.findOne({ user: userId })
         .populate('user', ['name', 'email', 'avatarUrl']);
+      if (!doc) return resolve({ error: true, errorMsg: 'Profile not found.' });
       resolve({ doc });
     } catch (err) {
       reject(err);
@@ -43,6 +45,7 @@ module.exports.getDocByHandle = function (handle) {
     try {
       const doc = await Profile.findOne({ handle })
         .populate('user', ['name', 'email', 'avatarUrl']);
+      if (!doc) return resolve({ error: true, errorMsg: 'Profile not found.' });
       resolve({ doc });
     } catch (err) {
       reject(err);
