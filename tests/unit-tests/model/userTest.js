@@ -1,5 +1,5 @@
 const should = require('should');
-const User = require('../../../model/User');
+const User = require('../../../models/User');
 
 
 describe('userTests', () => {

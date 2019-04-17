@@ -1,6 +1,6 @@
 const should = require('should');
 const mongoose = require('mongoose');
-const Job = require('../../../model/Job');
+const Job = require('../../../models/Job');
 
 
 describe('jobTests', () => {

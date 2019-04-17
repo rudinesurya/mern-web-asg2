@@ -1,14 +1,16 @@
 const passport = require('passport');
 const passportJWT = require('passport-jwt');
-const User = require('../model/User');
+const config = require('config');
+const User = require('../models/User').Model;
 
 const { ExtractJwt, Strategy } = passportJWT;
-const { SECRET } = process.env;
+const secret = config.get('jwt_secret');
+console.log(`jwt_secret is ${secret}`);
 
 
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = SECRET;
+opts.secretOrKey = secret;
 
 
 const strategy = new Strategy(opts, (payload, done) => {

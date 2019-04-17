@@ -1,0 +1,6 @@
+{
+  "jwt_secret": "Change Me",
+  "mongo_uri": "mongodb://localhost:27017/asg2",
+  // Change this to your own
+  "port": "3000"
+}

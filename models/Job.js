@@ -1,27 +1,8 @@
 const mongoose = require('mongoose');
+const Joi = require('joi');
+const CommentSchema = require('./Comment').Schema;
 
 const { Schema } = mongoose;
-
-// Create Schema
-const CommentSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'users',
-    required: true,
-  },
-  text: {
-    type: String,
-    required: true,
-  },
-  createdDate: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedDate: {
-    type: Date,
-    default: Date.now,
-  },
-});
 
 const JobSchema = new Schema({
   host: {
@@ -64,4 +45,15 @@ const JobSchema = new Schema({
   },
 });
 
-module.exports = mongoose.model('jobs', JobSchema);
+exports.Model = mongoose.model('jobs', JobSchema);
+
+exports.validate = (model) => {
+  const schema = {
+    host: Joi.objectId().required(),
+    title: Joi.string().min(3).max(50).required(),
+    venue: Joi.string().min(3).max(50).required(),
+    date: Joi.string().min(3).max(50).required(),
+  };
+
+  return Joi.validate(model, schema);
+};
