@@ -43,7 +43,7 @@ module.exports.loginUser = function (data) {
     if (error) return resolve({ error, errorMsg: error.details[0].message });
 
     try {
-      const user = await users.getDocByEmail(data.email);
+      const { doc: user } = await users.getDocByEmail(data.email);
       if (!user) return resolve({ error: true, errorMsg: 'User not found.' });
 
       const isMatch = await user.comparePassword(data.password);
@@ -60,7 +60,7 @@ module.exports.loginUser = function (data) {
 module.exports.createProfileIfNew = function (user) {
   return new Promise(async (resolve, reject) => {
     try {
-      const profile = await profiles.getDocByUserId(user._id);
+      const { doc: profile } = await profiles.getDocByUserId(user._id);
 
       if (profile) {
         profiles.updateDoc(profile._id, { lastLogin: Date.now() });

@@ -51,7 +51,7 @@ UserSchema.pre('save', function (next) {
 UserSchema.methods.generateAuthToken = function () {
   return new Promise(async (resolve, reject) => {
     const payload = {
-      _id: this._id,
+      _id: this._id.toString(),
       name: this.name,
       email: this.email,
     };

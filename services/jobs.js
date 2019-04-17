@@ -41,7 +41,7 @@ module.exports.getDocByHandle = function (handle) {
 module.exports.create = function (id, data) {
   return new Promise(async (resolve, reject) => {
     const newJob = {
-      host: id.toString(),
+      host: id,
       title: data.title,
       venue: data.venue,
       date: data.date,
@@ -94,9 +94,14 @@ module.exports.join = function (userId, jobId) {
     try {
       const job = await Job.findById(jobId);
       // Should not allow the host
-      if (job.host === userId) return resolve({ error: true, errorMsg: 'Unable to join own job.' });
+      if (job.host.toString() === userId) {
+        return resolve({
+          error: true,
+          errorMsg: 'Unable to join own job.',
+        });
+      }
       // Should not join more than once
-      if (job.participants.filter(p => p.user === userId).length > 0) {
+      if (job.participants.filter(p => p.user.toString() === userId).length > 0) {
         return resolve({ error: true, errorMsg: 'You are already joined.' });
       }
 
@@ -115,21 +120,19 @@ module.exports.leave = function (userId, jobId) {
     try {
       const job = await Job.findById(jobId);
       // Should not allow the host
-      if (job.host === userId) {
+      if (job.host.toString() === userId) {
         return resolve({
           error: true,
           errorMsg: 'Unable to leave own job.',
         });
       }
       // Should not leave an un-joined job
-      if (job.participants.filter(p => p.user === userId).length === 0) {
-        return resolve({ error: true, errorMsg: 'You are already joined.' });
+      if (job.participants.filter(p => p.user.toString() === userId).length === 0) {
+        return resolve({ error: true, errorMsg: 'You are not joined.' });
       }
 
       // Remove the user
-      const index = job.participants
-        .map(p => p.user.toString())
-        .indexOf(userId);
+      const index = job.participants.indexOf(userId);
 
       // Remove the user from the array
       job.participants.splice(index, 1);
@@ -168,12 +171,12 @@ module.exports.deleteComment = function (userId, jobId, commentId) {
     try {
       const job = await Job.findById(jobId);
 
-      const theComment = job.comments.find(c => c._id === commentId);
+      const theComment = job.comments.find(c => c._id.toString() === commentId);
       if (!theComment) {
         return resolve({ error: true, errorMsg: 'Comment not found.' });
       }
 
-      if (theComment.user !== userId) {
+      if (theComment.user.toString() !== userId) {
         return resolve({
           error: true,
           errorMsg: 'User not authorized to remove comment.',

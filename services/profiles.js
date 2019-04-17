@@ -1,4 +1,5 @@
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const Profile = require('../models/UserProfile').Model;
 
 
@@ -57,7 +58,6 @@ module.exports.create = function (data) {
   return new Promise(async (resolve, reject) => {
     const { error } = validate(data);
     if (error) return resolve({ error, errorMsg: error.details[0].message });
-
     try {
       const result = await new Profile(data).save();
       resolve({ result });
@@ -98,6 +98,7 @@ module.exports.updateDocByUserId = function (id, data) {
 // Validators
 const validate = (changes) => {
   const schema = {
+    user: Joi.objectId(),
     handle: Joi.string().min(3).max(50),
     location: Joi.string().min(3).max(50),
     bio: Joi.string().min(3).max(50),
