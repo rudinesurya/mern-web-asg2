@@ -1,10 +1,11 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const config = require('config');
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const { Schema } = mongoose;
 
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -47,18 +48,39 @@ UserSchema.pre('save', function (next) {
   }
 });
 
-UserSchema.methods.comparePassword = function (password) {
-  return new Promise((resolve, reject) => {
-    bcrypt.compare(password, this.password, (err, isMatch) => {
-      if (err) return reject(err);
-      resolve(isMatch);
-    });
+UserSchema.methods.generateAuthToken = function () {
+  return new Promise(async (resolve, reject) => {
+    const payload = {
+      _id: this._id,
+      name: this.name,
+      email: this.email,
+    };
+
+    try {
+      const token = await jwt.sign(payload, config.get('jwt_secret'), { expiresIn: 36000 });
+      resolve(token);
+    }
+    catch (err) {
+      reject(err);
+    }
   });
 };
 
-exports.Model = mongoose.model('users', UserSchema);
+UserSchema.methods.comparePassword = function (password) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const isMatch = await bcrypt.compare(password, this.password);
+      resolve(isMatch);
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
 
-exports.validate = (model) => {
+module.exports.Model = mongoose.model('users', UserSchema);
+
+module.exports.validate = (model) => {
   const schema = {
     name: Joi.string().min(3).max(50).required(),
     email: Joi.string().min(3).max(50).required(),

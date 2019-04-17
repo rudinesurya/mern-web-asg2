@@ -1,17 +1,18 @@
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const gravatar = require('gravatar');
-const jwt = require('jsonwebtoken');
-const config = require('config');
+
 const User = require('../models/User').Model;
+const users = require('./users');
+const profiles = require('./profiles');
 
-const secret = config.get('jwt_secret');
 
+module.exports.registerUser = function (data) {
+  return new Promise(async (resolve, reject) => {
+    const { error } = validateRegisteration(data);
+    if (error) return resolve({ error, errorMsg: error.details[0].message });
 
-exports.registerUser = function (data) {
-  return new Promise((resolve, reject) => {
     const { name, email, password } = data;
-    // Validate
-
-
     const avatarUrl = gravatar.url(email, {
       s: '200',
       r: 'pg',
@@ -25,50 +26,80 @@ exports.registerUser = function (data) {
       avatarUrl,
     });
 
-    // Save this user
-    newUser.save()
-      .then(result => resolve(result))
-      .catch(err => reject(err));
+    try {
+      const user = await newUser.save();
+      const token = await user.generateAuthToken();
+      resolve({ user, token });
+    }
+    catch (err) {
+      if (err.code === 11000) return resolve({ error: err, errorMsg: err.message });
+      reject(err);
+    }
   });
 };
 
-exports.loginUser = function (user, data) {
-  return new Promise((resolve, reject) => {
-    // Validate
+module.exports.loginUser = function (data) {
+  return new Promise(async (resolve, reject) => {
+    const { error } = validateLogin(data);
+    if (error) return resolve({ error, errorMsg: error.details[0].message });
 
-    // Check password
-    user.comparePassword(data.password)
-      .then((isMatch) => {
-        if (!isMatch) {
-          return reject('Authentication failed. Wrong password.');
-        }
+    try {
+      const user = await users.getDocByEmail(data.email);
+      if (!user) return resolve({ error: true, errorMsg: 'User not found.' });
 
-        const payload = {
-          id: user.id,
-          name: user.name,
-          email: user.email,
+      const isMatch = await user.comparePassword(data.password);
+      if (!isMatch) return resolve({ error: true, errorMsg: 'Wrong Password.' });
+
+      const token = await user.generateAuthToken();
+      resolve({ token, user });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.createProfileIfNew = function (user) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const profile = await profiles.getDocByUserId(user._id);
+
+      if (profile) {
+        profiles.updateDoc(profile._id, { lastLogin: Date.now() });
+      } else {
+        const profileField = {
+          user: user._id,
+          handle: user._id,
         };
 
-        jwt.sign(payload, secret, { expiresIn: 36000 }, (err, token) => {
-          if (err) return reject(err);
+        profiles.create(profileField);
+      }
 
-          resolve({
-            success: true,
-            token: `BEARER ${token}`,
-          });
-        });
-      })
-      .catch(err => reject(err));
+      resolve();
+    }
+    catch (err) {
+      reject(err);
+    }
   });
 };
 
-exports.getDocByEmail = function (email) {
-  return new Promise((resolve, reject) => {
-    // Validate
+// Validators
+const validateRegisteration = (cred) => {
+  const schema = {
+    name: Joi.string().min(3).max(50).required(),
+    email: Joi.string().min(3).max(50).required(),
+    password: Joi.string().min(3).max(50).required(),
+    password2: Joi.string().min(3).max(50).required(),
+  };
 
-    // Execute
-    User.findOne({ email })
-      .then(doc => resolve(doc))
-      .catch(err => reject(err));
-  });
+  return Joi.validate(cred, schema);
+};
+
+const validateLogin = (cred) => {
+  const schema = {
+    email: Joi.string().min(3).max(50).required(),
+    password: Joi.string().min(3).max(50).required(),
+  };
+
+  return Joi.validate(cred, schema);
 };

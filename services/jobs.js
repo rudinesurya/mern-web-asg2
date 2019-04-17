@@ -1,166 +1,210 @@
+const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const Job = require('../models/Job').Model;
 
 
-exports.getAllDocs = function () {
-  return new Promise((resolve, reject) => {
-    // Validate
+module.exports.getAllDocs = function () {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const docs = await Job.find();
+      resolve({ docs });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
 
-    // Execute
-    Job.find()
-      .then(docs => resolve(docs))
-      .catch((err) => {
-        reject(err);
+module.exports.getDocById = function (id) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const doc = await Job.findById(id);
+      resolve({ doc });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.getDocByHandle = function (handle) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const doc = await Job.findOne({ handle });
+      resolve({ doc });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.create = function (id, data) {
+  return new Promise(async (resolve, reject) => {
+    const newJob = {
+      host: id.toString(),
+      title: data.title,
+      venue: data.venue,
+      date: data.date,
+    };
+    const { error } = validateRegisteration(newJob);
+    if (error) return resolve({ error, errorMsg: error.details[0].message });
+
+    try {
+      const result = await new Job(newJob).save();
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.updateDoc = function (userId, jobId, data) {
+  return new Promise(async (resolve, reject) => {
+    const { error } = validateUpdate(data);
+    if (error) return resolve({ error, errorMsg: error.details[0].message });
+
+    try {
+      const result = await Job.findOneAndUpdate({ _id: jobId, host: userId },
+        { $set: data },
+        { new: true });
+      if (!result)
+        return resolve({ error: true, errorMsg: 'Failed to update job.' });
+
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.deleteById = function (id) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const result = await Job.findOneAndRemove({ _id: id });
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.join = function (userId, jobId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const job = await Job.findById(jobId);
+      // Should not allow the host
+      if (job.host === userId) return resolve({ error: true, errorMsg: 'Unable to join own job.' });
+      // Should not join more than once
+      if (job.participants.filter(p => p.user === userId).length > 0) {
+        return resolve({ error: true, errorMsg: 'You are already joined.' });
+      }
+
+      // Add the user
+      job.participants.unshift({ user: userId });
+      const result = await job.save();
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.leave = function (userId, jobId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const job = await Job.findById(jobId);
+      // Should not allow the host
+      if (job.host === userId) return resolve({
+        error: true,
+        errorMsg: 'Unable to leave own job.'
       });
+      // Should not leave an un-joined job
+      if (job.participants.filter(p => p.user === userId).length === 0) {
+        return resolve({ error: true, errorMsg: 'You are already joined.' });
+      }
+
+      // Remove the user
+      const index = job.participants
+        .map(p => p.user.toString())
+        .indexOf(userId);
+
+      // Remove the user from the array
+      job.participants.splice(index, 1);
+
+      const result = await job.save();
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
   });
 };
 
-exports.getDocById = function (id) {
-  return new Promise((resolve, reject) => {
-    // Validate
+module.exports.postComment = function (userId, jobId, data) {
+  return new Promise(async (resolve, reject) => {
+    const newComment = {
+      user: userId,
+      text: data.text,
+    };
 
-    // Execute
-    Job.findById(id)
-      .then((doc) => {
-        if (!doc) {
-          return reject('No job found');
-        }
+    const { error } = validatePostComment(newComment);
+    if (error) return resolve({ error, errorMsg: error.details[0].message });
 
-        resolve(doc);
-      })
-      .catch((err) => {
-        reject(err);
+    try {
+      const job = await Job.findById(jobId);
+      job.comments.unshift(newComment);
+      const result = await job.save();
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
+  });
+};
+
+module.exports.deleteComment = function (userId, jobId, commentId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const job = await Job.findById(jobId);
+
+      const theComment = job.comments.find(c => c._id === commentId);
+      if (!theComment) {
+        return resolve({ error: true, errorMsg: 'Comment not found.' });
+      }
+
+      if (theComment.user !== userId) return resolve({
+        error: true,
+        errorMsg: 'User not authorized to remove comment.'
       });
+
+      const index = job.comments.indexOf(theComment);
+      job.comments.splice(index, 1);
+
+      const result = await job.save();
+      resolve({ result });
+    }
+    catch (err) {
+      reject(err);
+    }
   });
 };
 
-exports.getDocByHandle = function (handle) {
-  return new Promise((resolve, reject) => {
-    // Validate
+// Validators
+const validateRegisteration = require('../models/Job').validate;
 
-    // Execute
-    Job.findOne({ handle })
-      .then((doc) => {
-        if (!doc) {
-          return reject('No job found');
-        }
+const validatePostComment = require('../models/Comment').validate;
 
-        resolve(doc);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
+const validateUpdate = (changes) => {
+  const schema = {
+    title: Joi.string().min(3).max(50),
+    venue: Joi.string().min(3).max(50),
+    date: Joi.string().min(3).max(50),
+  };
 
-exports.create = function (data) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    new Job(data).save()
-      .then(result => resolve(result))
-      .catch(err => reject(err));
-  });
-};
-
-exports.updateDoc = function (id, data) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    Job.findOneAndUpdate({ _id: id }, { $set: data }, { new: true })
-      .then(result => resolve(result))
-      .catch(err => reject(err));
-  });
-};
-
-exports.deleteById = function (id) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    Job.findOneAndRemove({ _id: id })
-      .then(result => resolve(result))
-      .catch(err => reject(err));
-  });
-};
-
-exports.join = function (userId, jobId) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    Job.findById(jobId)
-      .then((job) => {
-        job.participants.unshift({ user: userId });
-        job.save().then(result => resolve(result));
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
-
-exports.leave = function (userId, jobId) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    Job.findById(jobId)
-      .then((job) => {
-        const index = job.participants
-          .map(p => p.user.toString())
-          .indexOf(userId);
-
-        // Remove the user from the array
-        job.participants.splice(index, 1);
-        job.save().then(result => resolve(result));
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
-
-exports.postComment = function (userId, jobId, data) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    Job.findById(jobId)
-      .then((job) => {
-        const newComment = {
-          user: userId,
-          text: data.text,
-        };
-
-        job.comments.unshift(newComment);
-        job.save().then(result => resolve(result));
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
-};
-
-exports.deleteComment = function (jobId, commentId) {
-  return new Promise((resolve, reject) => {
-    // Validate
-
-    // Execute
-    Job.findById(jobId)
-      .then((job) => {
-        const theComment = job.comments.find(c => c._id.toString() === commentId);
-        if (!theComment) {
-          return reject('Comment does not exist');
-        }
-
-        const index = job.comments.indexOf(theComment);
-        job.comments.splice(index, 1);
-        job.save().then(result => resolve(result));
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
+  return Joi.validate(changes, schema);
 };

@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+Joi.objectId = require('joi-objectid')(Joi);
 const CommentSchema = require('./Comment').Schema;
 
-const { Schema } = mongoose;
 
-const JobSchema = new Schema({
+const JobSchema = new mongoose.Schema({
   host: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
     required: true,
   },
@@ -26,7 +26,7 @@ const JobSchema = new Schema({
   participants: [
     {
       user: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true,
       },
@@ -45,9 +45,9 @@ const JobSchema = new Schema({
   },
 });
 
-exports.Model = mongoose.model('jobs', JobSchema);
+module.exports.Model = mongoose.model('jobs', JobSchema);
 
-exports.validate = (model) => {
+module.exports.validate = (model) => {
   const schema = {
     host: Joi.objectId().required(),
     title: Joi.string().min(3).max(50).required(),

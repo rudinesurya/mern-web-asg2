@@ -1,26 +1,20 @@
+const winston = require('winston');
 const router = require('express').Router();
-const passport = require('passport');
+const passport = require('../../middlewares/passport');
 const auth = require('../../services/auth');
 const users = require('../../services/users');
-const profiles = require('../../services/profiles');
 
 
 /**
- * @route:  POST api/users/register
+ * @route:  POST api/users/
  * @desc:   Register a new user
  * @access: public
  */
-router.post('/register', async (req, res) => {
-  try {
-    const user = await auth.getDocByEmail(req.body.email);
-    if (user) return res.status(400).json('email already exists');
+router.post('/', async (req, res) => {
+  const { token, user, error, errorMsg } = await auth.registerUser(req.body);
 
-    const result = await auth.registerUser(req.body);
-    res.json(result);
-  }
-  catch (err) {
-    res.status(400).json(err);
-  }
+  if (error) return res.status(400).json(errorMsg);
+  res.json(user);
 });
 
 /**
@@ -29,30 +23,10 @@ router.post('/register', async (req, res) => {
  * @access: public
  */
 router.post('/login', async (req, res) => {
-  try {
-    const user = await auth.getDocByEmail(req.body.email);
-    if (!user) return res.status(400).json('email not found');
-
-    const result = await auth.loginUser(user, req.body);
-
-    // Create a user profile if a new user logged in
-    const profile = await profiles.getDocByUserId(user._id);
-    if (profile) {
-      profiles.updateDoc(profile._id, { lastLogin: Date.now() });
-    } else {
-      const profileField = {
-        user: user.id,
-        handle: user.id,
-      };
-
-      profiles.create(profileField);
-    }
-
-    res.json(result);
-  }
-  catch (err) {
-    res.status(400).json(err);
-  }
+  const { token, user } = await auth.loginUser(req.body);
+  // Create a user profile if a new user logged in
+  auth.createProfileIfNew(user);
+  res.json(token);
 });
 
 /**
@@ -60,7 +34,7 @@ router.post('/login', async (req, res) => {
  * @desc:   Get current user
  * @access: private
  */
-router.get('/current', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.get('/current', passport, async (req, res) => {
   res.json(req.user);
 });
 
@@ -69,14 +43,9 @@ router.get('/current', passport.authenticate('jwt', { session: false }), async (
  * @desc:   Delete current user
  * @access: private
  */
-router.delete('/current', passport.authenticate('jwt', { session: false }), async (req, res) => {
-  try {
-    const result = await users.deleteById(req.user.id);
-    res.json(result);
-  }
-  catch (err) {
-    res.status(400).json(err);
-  }
+router.delete('/current', passport, async (req, res) => {
+  const { result } = await users.deleteById(req.user._id);
+  res.json(result);
 });
 
 module.exports = router;

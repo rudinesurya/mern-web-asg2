@@ -1,11 +1,10 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 
-const { Schema } = mongoose;
 
-const CommentSchema = new Schema({
+const CommentSchema = new mongoose.Schema({
   user: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
     required: true,
   },
@@ -23,9 +22,9 @@ const CommentSchema = new Schema({
   },
 });
 
-exports.Schema = CommentSchema;
+module.exports.Schema = CommentSchema;
 
-exports.validate = (model) => {
+module.exports.validate = (model) => {
   const schema = {
     user: Joi.objectId().required(),
     text: Joi.string().min(3).max(200).required(),
