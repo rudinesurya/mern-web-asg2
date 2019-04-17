@@ -1,6 +1,5 @@
 const supertest = require('supertest');
 const should = require('should');
-const app = require('../../app');
 
 
 describe('User API test', function () {
@@ -12,28 +11,28 @@ describe('User API test', function () {
     password: 'secret',
   };
 
-  let server;
-
-  before((done) => {
-    server = supertest.agent('http://localhost:3000');
-    server
-      .post('/api/users/register')
-      .send(theUser)
-      .then(() => done());
-  });
-
-  it('should pass login validation', (done) => {
-    server
-      .post('/api/users/login')
-      .send(theUser)
-      .expect('Content-type', /json/)
-      .expect(200)
-      .then((res) => {
-        const { success } = res.body;
-        success.should.equal(true);
-        done();
-      });
-  });
+  // let server;
+  //
+  // before((done) => {
+  //   server = supertest.agent('http://localhost:3000');
+  //   server
+  //     .post('/api/users/register')
+  //     .send(theUser)
+  //     .then(() => done());
+  // });
+  //
+  // it('should pass login validation', (done) => {
+  //   server
+  //     .post('/api/users/login')
+  //     .send(theUser)
+  //     .expect('Content-type', /json/)
+  //     .expect(200)
+  //     .then((res) => {
+  //       const { success } = res.body;
+  //       success.should.equal(true);
+  //       done();
+  //     });
+  // });
 
   // it('should require all missing required variables', (done) => {
   //   supertest(app)

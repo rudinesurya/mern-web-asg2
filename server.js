@@ -16,6 +16,4 @@ db.DBConnectMongoose()
     const port = config.get('port');
     app.listen(port || 3000);
     console.log(`Server listening on port ${port}`);
-  }).catch((err) => {
-  console.log(`Error: ${err}`);
-});
+  }).catch(err => console.log(`Error: ${err}`));

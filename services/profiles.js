@@ -8,8 +8,7 @@ module.exports.getAllDocs = function () {
       const docs = await Profile.find()
         .populate('user', ['name', 'email', 'avatarUrl']);
       resolve({ docs });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -21,8 +20,7 @@ module.exports.getDocById = function (id) {
       const doc = await Profile.findById(id)
         .populate('user', ['name', 'email', 'avatarUrl']);
       resolve({ doc });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -34,8 +32,7 @@ module.exports.getDocByUserId = function (userId) {
       const doc = await Profile.findOne({ user: userId })
         .populate('user', ['name', 'email', 'avatarUrl']);
       resolve({ doc });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -47,8 +44,7 @@ module.exports.getDocByHandle = function (handle) {
       const doc = await Profile.findOne({ handle })
         .populate('user', ['name', 'email', 'avatarUrl']);
       resolve({ doc });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -62,8 +58,7 @@ module.exports.create = function (data) {
     try {
       const result = await new Profile(data).save();
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -77,8 +72,7 @@ module.exports.updateDoc = function (id, data) {
     try {
       const result = await Profile.findOneAndUpdate({ _id: id }, { $set: data }, { new: true });
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -92,8 +86,7 @@ module.exports.updateDocByUserId = function (id, data) {
     try {
       const result = await Profile.findOneAndUpdate({ user: id }, { $set: data }, { new: true });
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });

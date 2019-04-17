@@ -1,4 +1,3 @@
-const winston = require('winston');
 const router = require('express').Router();
 const passport = require('../../middlewares/passport');
 const auth = require('../../services/auth');
@@ -11,7 +10,7 @@ const users = require('../../services/users');
  * @access: public
  */
 router.post('/', async (req, res) => {
-  const { token, user, error, errorMsg } = await auth.registerUser(req.body);
+  const { user, error, errorMsg } = await auth.registerUser(req.body);
 
   if (error) return res.status(400).json(errorMsg);
   res.json(user);

@@ -6,8 +6,7 @@ module.exports.getDocByEmail = function (email) {
     try {
       const doc = await User.findOne({ email });
       resolve({ doc });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -18,8 +17,7 @@ module.exports.deleteById = function (id) {
     try {
       const result = await User.findOneAndRemove({ _id: id });
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });

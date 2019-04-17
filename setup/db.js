@@ -17,8 +17,7 @@ module.exports.DBConnectMongoose = function () {
       });
       console.log('mongo connection created');
       resolve(conn);
-    }
-    catch (err) {
+    } catch (err) {
       console.log(`error creating db connection: ${err}`);
       reject(err);
     }

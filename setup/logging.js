@@ -7,7 +7,8 @@ module.exports = function (app) {
 
   winston.exceptions.handle(
     new winston.transports.Console({ colorize: true, prettyPrint: true }),
-    new winston.transports.File({ filename: 'uncaughtExceptions.txt' }));
+    new winston.transports.File({ filename: 'uncaughtExceptions.txt' }),
+  );
 
   process.on('unhandledRejection', (ex) => {
     throw ex;

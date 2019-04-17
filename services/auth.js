@@ -30,8 +30,7 @@ module.exports.registerUser = function (data) {
       const user = await newUser.save();
       const token = await user.generateAuthToken();
       resolve({ user, token });
-    }
-    catch (err) {
+    } catch (err) {
       if (err.code === 11000) return resolve({ error: err, errorMsg: err.message });
       reject(err);
     }
@@ -52,8 +51,7 @@ module.exports.loginUser = function (data) {
 
       const token = await user.generateAuthToken();
       resolve({ token, user });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -76,8 +74,7 @@ module.exports.createProfileIfNew = function (user) {
       }
 
       resolve();
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });

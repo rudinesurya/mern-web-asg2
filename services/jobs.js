@@ -8,8 +8,7 @@ module.exports.getAllDocs = function () {
     try {
       const docs = await Job.find();
       resolve({ docs });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -20,8 +19,7 @@ module.exports.getDocById = function (id) {
     try {
       const doc = await Job.findById(id);
       resolve({ doc });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -32,8 +30,7 @@ module.exports.getDocByHandle = function (handle) {
     try {
       const doc = await Job.findOne({ handle });
       resolve({ doc });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -53,8 +50,7 @@ module.exports.create = function (id, data) {
     try {
       const result = await new Job(newJob).save();
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -69,12 +65,12 @@ module.exports.updateDoc = function (userId, jobId, data) {
       const result = await Job.findOneAndUpdate({ _id: jobId, host: userId },
         { $set: data },
         { new: true });
-      if (!result)
+      if (!result) {
         return resolve({ error: true, errorMsg: 'Failed to update job.' });
+      }
 
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -85,8 +81,7 @@ module.exports.deleteById = function (id) {
     try {
       const result = await Job.findOneAndRemove({ _id: id });
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -107,8 +102,7 @@ module.exports.join = function (userId, jobId) {
       job.participants.unshift({ user: userId });
       const result = await job.save();
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -119,10 +113,12 @@ module.exports.leave = function (userId, jobId) {
     try {
       const job = await Job.findById(jobId);
       // Should not allow the host
-      if (job.host === userId) return resolve({
-        error: true,
-        errorMsg: 'Unable to leave own job.'
-      });
+      if (job.host === userId) {
+        return resolve({
+          error: true,
+          errorMsg: 'Unable to leave own job.',
+        });
+      }
       // Should not leave an un-joined job
       if (job.participants.filter(p => p.user === userId).length === 0) {
         return resolve({ error: true, errorMsg: 'You are already joined.' });
@@ -138,8 +134,7 @@ module.exports.leave = function (userId, jobId) {
 
       const result = await job.save();
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -160,8 +155,7 @@ module.exports.postComment = function (userId, jobId, data) {
       job.comments.unshift(newComment);
       const result = await job.save();
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -177,18 +171,19 @@ module.exports.deleteComment = function (userId, jobId, commentId) {
         return resolve({ error: true, errorMsg: 'Comment not found.' });
       }
 
-      if (theComment.user !== userId) return resolve({
-        error: true,
-        errorMsg: 'User not authorized to remove comment.'
-      });
+      if (theComment.user !== userId) {
+        return resolve({
+          error: true,
+          errorMsg: 'User not authorized to remove comment.',
+        });
+      }
 
       const index = job.comments.indexOf(theComment);
       job.comments.splice(index, 1);
 
       const result = await job.save();
       resolve({ result });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });

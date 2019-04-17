@@ -59,8 +59,7 @@ UserSchema.methods.generateAuthToken = function () {
     try {
       const token = await jwt.sign(payload, config.get('jwt_secret'), { expiresIn: 36000 });
       resolve(token);
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
@@ -71,8 +70,7 @@ UserSchema.methods.comparePassword = function (password) {
     try {
       const isMatch = await bcrypt.compare(password, this.password);
       resolve(isMatch);
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
