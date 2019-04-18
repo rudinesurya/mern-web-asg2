@@ -9,12 +9,12 @@ describe('Profile Test Suite', function () {
   this.timeout(120000);
 
   before(async () => {
-    server = await require('../server').initialize();
+    server = await require('../helper/server').initialize();
     mockgoose.reset();
   });
 
   after(async () => {
-    await require('../server').close();
+    await require('../helper/server').close();
   });
 
   describe('Check Auth', () => {

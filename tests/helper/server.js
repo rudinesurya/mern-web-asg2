@@ -1,10 +1,10 @@
 const express = require('express');
 const config = require('config');
-require('../setup/extras');
+require('../../setup/extras');
 const mongoose = require('mongoose');
 const { Mockgoose } = require('mockgoose');
-const setupRouting = require('../setup/routes');
-const db = require('../setup/db');
+const setupRouting = require('../../setup/routes');
+const db = require('../../setup/db');
 
 const mockgoose = new Mockgoose(mongoose);
 

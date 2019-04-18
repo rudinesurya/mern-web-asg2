@@ -8,11 +8,11 @@ describe('Authentication Test Suite', function () {
   this.timeout(120000);
 
   before(async () => {
-    server = await require('../server').initialize();
+    server = await require('../helper/server').initialize();
   });
 
   after(async () => {
-    await require('../server').close();
+    await require('../helper/server').close();
   });
 
   const theUser = {

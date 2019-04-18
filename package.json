@@ -7,7 +7,8 @@
     "dev": "cross-env NODE_ENV=development nodemon server",
     "eslint": "eslint . --ext .js",
     "unit-test": "cross-env NODE_ENV=test mocha ./tests/unit-tests/**/*.js --exit || true",
-    "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --exit || true"
+    "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --exit || true",
+    "coverage": "cross-env NODE_ENV=test nyc --reporter=html mocha \"{,!(node_modules)/**/}*.test.js\" --exit || true"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -47,6 +48,7 @@
     "mocha": "^6.1.3",
     "mockgoose": "^8.0.1",
     "nodemon": "^1.18.11",
+    "nyc": "^14.0.0",
     "should": "^13.2.3",
     "sinon": "^7.3.2",
     "sinon-express-mock": "^2.2.0",
