@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --exec babel-node index --require babel-core/register --require babel-polyfill",
-    "dev": "cross-env NODE_ENV=development nodemon index",
+    "start": "node --exec babel-node server --require babel-core/register --require babel-polyfill",
+    "dev": "cross-env NODE_ENV=development nodemon server",
     "eslint": "eslint . --ext .js",
     "unit-test": "cross-env NODE_ENV=test mocha ./tests/unit-tests/**/*.js --exit || true",
     "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --exit || true"

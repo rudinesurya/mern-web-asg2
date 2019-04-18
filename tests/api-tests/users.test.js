@@ -1,13 +1,15 @@
 const supertest = require('supertest');
 const should = require('should');
-const mongoose = require('mongoose');
-const { Mockgoose } = require('mockgoose');
-const mockgoose = new Mockgoose(mongoose);
-const db = require('../../setup/db');
+const mockgoose = require('../helper/mockgoose-helper');
 
 
 describe('/api/users', function () {
+  let app;
   this.timeout(120000);
+
+  before(async () => {
+    app = await require('../server');
+  });
 
   const theUser = {
     name: 'testuser',
@@ -21,27 +23,14 @@ describe('/api/users', function () {
     password: 'secret',
   };
 
-  let theApp;
-
-  // Start the server once before all tests
-  before((done) => {
-    mockgoose.prepareStorage().then(() => {
-      db.DBConnectMongoose()
-        .then(() => {
-          theApp = require('../../server');
-          done();
-        }).catch(err => console.log(`Error: ${err}`));
-    });
-  });
-
   describe('Registeration', function () {
     // Clean up before each test
-    beforeEach((done) => {
-      mockgoose.helper.reset().then(done());
+    beforeEach(async () => {
+      await mockgoose.reset();
     });
 
     it('should register new user', async () => {
-      const res = await supertest(theApp)
+      const res = await supertest(app)
         .post('/api/users/')
         .send(theUser)
         .expect(201);
@@ -54,7 +43,7 @@ describe('/api/users', function () {
     it('should require all missing required variables', async () => {
       const { email, ...badUser } = theUser;
 
-      await supertest(theApp)
+      await supertest(app)
         .post('/api/users/')
         .send(badUser)
         .expect(400);
@@ -63,7 +52,7 @@ describe('/api/users', function () {
     it('should require email in right format', async () => {
       const badUser = { ...theUser, email: 'test' };
 
-      await supertest(theApp)
+      await supertest(app)
         .post('/api/users/')
         .send(badUser)
         .expect(400);
@@ -73,13 +62,13 @@ describe('/api/users', function () {
   describe('Login', function () {
     // Create a user
     before(async () => {
-      await supertest(theApp)
+      await supertest(app)
         .post('/api/users/')
         .send(theUser);
     });
 
     it('should login', async () => {
-      const res = await supertest(theApp)
+      const res = await supertest(app)
         .post('/api/users/login')
         .send(theUserLogin)
         .expect(200);
@@ -88,7 +77,7 @@ describe('/api/users', function () {
     it('should not login with wrong password', async () => {
       const badUserLogin = { ...theUserLogin, password: 'wrong' };
 
-      const res = await supertest(theApp)
+      const res = await supertest(app)
         .post('/api/users/login')
         .send(badUserLogin)
         .expect(400);
