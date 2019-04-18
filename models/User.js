@@ -51,7 +51,7 @@ UserSchema.pre('save', function (next) {
 UserSchema.methods.generateAuthToken = function () {
   return new Promise(async (resolve, reject) => {
     const payload = {
-      _id: this._id.toString(),
+      _id: this._id,
       name: this.name,
       email: this.email,
     };
@@ -81,7 +81,7 @@ module.exports.Model = mongoose.model('users', UserSchema);
 module.exports.validate = (model) => {
   const schema = {
     name: Joi.string().min(3).max(50).required(),
-    email: Joi.string().min(3).max(50).required(),
+    email: Joi.string().email({ minDomainAtoms: 2 }).required(),
     password: Joi.string().min(3).max(50).required(),
   };
 

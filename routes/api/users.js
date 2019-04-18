@@ -11,7 +11,6 @@ const users = require('../../services/users');
  */
 router.post('/', async (req, res) => {
   const { user, error, errorMsg } = await auth.registerUser(req.body);
-
   if (error) return res.status(400).json(errorMsg);
   res.status(201).json(user);
 });

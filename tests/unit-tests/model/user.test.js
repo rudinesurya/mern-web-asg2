@@ -1,8 +1,11 @@
 const should = require('should');
+const jwt = require('jsonwebtoken');
+const config = require('config');
+const mongoose = require('mongoose');
 const User = require('../../../models/User').Model;
 
 
-describe('userTests', () => {
+describe('user schema tests', () => {
   const theUser = {
     name: 'test user',
     email: 'test@test.com',
@@ -36,5 +39,22 @@ describe('userTests', () => {
 
       done();
     });
+  });
+
+  it('should generate correct auth token', (done) => {
+    const payload = {
+      _id: new mongoose.Types.ObjectId().toString(),
+      name: 'test user',
+      email: 'test@test.com',
+    };
+
+    const m = new User(payload);
+    m.generateAuthToken()
+      .then((token) => {
+        const decoded = jwt.verify(token, config.get('jwt_secret'));
+        decoded.should.match(payload);
+
+        done();
+      });
   });
 });

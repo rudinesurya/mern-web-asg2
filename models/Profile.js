@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
 
 
-const UserProfileSchema = new mongoose.Schema({
+const ProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'users',
@@ -33,7 +32,7 @@ const UserProfileSchema = new mongoose.Schema({
   },
 });
 
-module.exports.Model = mongoose.model('user profiles', UserProfileSchema);
+module.exports.Model = mongoose.model('profiles', ProfileSchema);
 
 module.exports.validate = (model) => {
   const schema = {

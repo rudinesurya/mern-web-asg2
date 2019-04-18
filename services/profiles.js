@@ -1,6 +1,5 @@
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
-const Profile = require('../models/UserProfile').Model;
+const Profile = require('../models/Profile').Model;
 
 
 module.exports.getAllDocs = function () {
@@ -57,6 +56,7 @@ module.exports.getDocByHandle = function (handle) {
 module.exports.create = function (data) {
   return new Promise(async (resolve, reject) => {
     const { error } = validate(data);
+    if (error) console.log(error);
     if (error) return resolve({ error, errorMsg: error.details[0].message });
     try {
       const result = await new Profile(data).save();

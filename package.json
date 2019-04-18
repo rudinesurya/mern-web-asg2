@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --exec babel-node server --require babel-core/register --require babel-polyfill",
-    "dev": "cross-env NODE_ENV=development nodemon server",
+    "start": "node --exec babel-node index --require babel-core/register --require babel-polyfill",
+    "dev": "cross-env NODE_ENV=development nodemon index",
     "eslint": "eslint . --ext .js",
     "unit-test": "cross-env NODE_ENV=test mocha ./tests/unit-tests/**/*.js --exit || true",
     "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --exit || true"
@@ -48,7 +48,8 @@
     "mockgoose": "^8.0.1",
     "nodemon": "^1.18.11",
     "should": "^13.2.3",
-    "sinon": "^7.3.1",
+    "sinon": "^7.3.2",
+    "sinon-express-mock": "^2.2.0",
     "sinon-test": "^2.4.0",
     "supertest": "^4.0.2"
   }

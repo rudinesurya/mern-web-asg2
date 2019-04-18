@@ -1,5 +1,4 @@
 const Joi = require('joi');
-Joi.objectId = require('joi-objectid')(Joi);
 const gravatar = require('gravatar');
 
 const User = require('../models/User').Model;
@@ -66,8 +65,8 @@ module.exports.createProfileIfNew = function (user) {
         profiles.updateDoc(profile._id, { lastLogin: Date.now() });
       } else {
         const profileField = {
-          user: user._id,
-          handle: user._id,
+          user: user._id.toString(),
+          handle: user._id.toString(),
         };
 
         profiles.create(profileField);
@@ -84,7 +83,7 @@ module.exports.createProfileIfNew = function (user) {
 const validateRegisteration = (cred) => {
   const schema = {
     name: Joi.string().min(3).max(50).required(),
-    email: Joi.string().min(3).max(50).required(),
+    email: Joi.string().email({ minDomainAtoms: 2 }).required(),
     password: Joi.string().min(3).max(50).required(),
     password2: Joi.string().min(3).max(50).required(),
   };
@@ -94,7 +93,7 @@ const validateRegisteration = (cred) => {
 
 const validateLogin = (cred) => {
   const schema = {
-    email: Joi.string().min(3).max(50).required(),
+    email: Joi.string().email({ minDomainAtoms: 2 }).required(),
     password: Joi.string().min(3).max(50).required(),
   };
 

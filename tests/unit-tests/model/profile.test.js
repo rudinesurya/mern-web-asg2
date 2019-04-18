@@ -1,6 +1,6 @@
 const should = require('should');
 const mongoose = require('mongoose');
-const Profile = require('../../../models/UserProfile').Model;
+const Profile = require('../../../models/Profile').Model;
 
 
 describe('userProfileTests', () => {
