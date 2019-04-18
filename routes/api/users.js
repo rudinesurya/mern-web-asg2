@@ -24,7 +24,7 @@ router.post('/login', async (req, res) => {
   const { token, user, error, errorMsg } = await auth.loginUser(req.body);
   if (error) return res.status(400).json(errorMsg);
   // Create a user profile if a new user logged in
-  auth.createProfileIfNew(user);
+  await auth.createProfileIfNew(user);
   res.json(token);
 });
 

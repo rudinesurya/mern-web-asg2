@@ -13,6 +13,17 @@ router.get('/', async (req, res) => {
 });
 
 /**
+ * @route   POST api/profiles
+ * @desc    Create a new user profile
+ * @access: admin
+ */
+router.post('/', async (req, res) => {
+  const { result, error, errorMsg } = await profiles.create(req.body);
+  if (error) return res.status(400).json(errorMsg);
+  res.status(201).json(result);
+});
+
+/**
  * @route   GET api/profiles/current
  * @desc    Get current user profile if it exists
  * @access: private

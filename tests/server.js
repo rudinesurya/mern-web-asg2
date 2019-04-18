@@ -9,20 +9,28 @@ const db = require('../setup/db');
 const mockgoose = new Mockgoose(mongoose);
 
 const app = express();
+let server;
 
 setupRouting(app); // Setup routing
 
 
-// Connect to DB
-mockgoose.prepareStorage()
-  .then(() => {
-    db.DBConnectMongoose()
+module.exports.initialize = () => {
+  return new Promise(async (resolve, reject) => {
+    // Connect to DB
+    mockgoose.prepareStorage()
       .then(() => {
-        const port = config.get('port');
-        app.listen(port || 3000); // Start the server
-        console.log(`Server listening on port ${port}`);
-      })
-      .catch(err => console.log(`Error: ${err}`));
+        db.DBConnectMongoose()
+          .then(() => {
+            const port = config.get('port');
+            server = app.listen(port || 3000); // Start the server
+            console.log(`Server listening on port ${port}`);
+            resolve(server);
+          })
+          .catch(err => reject(err));
+      });
   });
+};
 
-module.exports = app;
+module.exports.close = () => {
+  server.close();
+};

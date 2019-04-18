@@ -3,12 +3,16 @@ const should = require('should');
 const mockgoose = require('../helper/mockgoose-helper');
 
 
-describe('/api/users', function () {
-  let app;
+describe('Authentication Test Suite', function () {
+  let server;
   this.timeout(120000);
 
   before(async () => {
-    app = await require('../server');
+    server = await require('../server').initialize();
+  });
+
+  after(async () => {
+    await require('../server').close();
   });
 
   const theUser = {
@@ -23,14 +27,14 @@ describe('/api/users', function () {
     password: 'secret',
   };
 
-  describe('Registeration', function () {
+  describe('Registeration', () => {
     // Clean up before each test
     beforeEach(async () => {
       await mockgoose.reset();
     });
 
     it('should register new user', async () => {
-      const res = await supertest(app)
+      const res = await supertest(server)
         .post('/api/users/')
         .send(theUser)
         .expect(201);
@@ -43,7 +47,7 @@ describe('/api/users', function () {
     it('should require all missing required variables', async () => {
       const { email, ...badUser } = theUser;
 
-      await supertest(app)
+      await supertest(server)
         .post('/api/users/')
         .send(badUser)
         .expect(400);
@@ -52,32 +56,54 @@ describe('/api/users', function () {
     it('should require email in right format', async () => {
       const badUser = { ...theUser, email: 'test' };
 
-      await supertest(app)
+      await supertest(server)
         .post('/api/users/')
         .send(badUser)
         .expect(400);
     });
   });
 
-  describe('Login', function () {
+  describe('Login', () => {
     // Create a user
     before(async () => {
-      await supertest(app)
+      await supertest(server)
         .post('/api/users/')
         .send(theUser);
     });
 
     it('should login', async () => {
-      const res = await supertest(app)
+      const res = await supertest(server)
         .post('/api/users/login')
         .send(theUserLogin)
+        .expect(200);
+    });
+
+    it('should return 401 when token is null', async () => {
+      const token = '';
+      await supertest(server)
+        .get('/api/users/current')
+        .set('Authorization', `bearer ${token}`)
+        .expect(401);
+    });
+
+    it('should return 200 when token is valid', async () => {
+      const res = await supertest(server)
+        .post('/api/users/login')
+        .send(theUserLogin)
+        .expect(200);
+
+      const token = res.body;
+
+      await supertest(server)
+        .get('/api/users/current')
+        .set('Authorization', `bearer ${token}`)
         .expect(200);
     });
 
     it('should not login with wrong password', async () => {
       const badUserLogin = { ...theUserLogin, password: 'wrong' };
 
-      const res = await supertest(app)
+      const res = await supertest(server)
         .post('/api/users/login')
         .send(badUserLogin)
         .expect(400);
