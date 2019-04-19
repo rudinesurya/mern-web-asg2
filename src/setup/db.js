@@ -14,6 +14,7 @@ module.exports.DBConnectMongoose = function () {
       const conn = await mongoose.connect(mongoUri, {
         useCreateIndex: true,
         useNewUrlParser: true,
+        useFindAndModify: false,
       });
       console.log('mongo connection created');
       resolve(conn);
