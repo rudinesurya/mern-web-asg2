@@ -3,12 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --exec babel-node ./app/server --require babel-core/register --require babel-polyfill",
+    "start": "node ./app/server",
     "dev": "cross-env NODE_ENV=development nodemon ./app/server",
     "eslint": "eslint . --ext .js",
     "unit-test": "cross-env NODE_ENV=test mocha ./app/tests/unit-tests/**/*.js --exit || true",
     "api-test": "cross-env NODE_ENV=test mocha ./app/tests/api-tests/**/*.js --exit || true",
     "coverage": "cross-env NODE_ENV=test nyc --reporter=html mocha \"{,!(node_modules)/**/}*.test.js\" --exit || true"
+  },
+  "engines": {
+    "node": "10.15.0"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
