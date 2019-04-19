@@ -1,4 +1,3 @@
-
 const Job = require('../models/Job').Model;
 
 // Validations
@@ -86,6 +85,8 @@ module.exports.deleteById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
       const result = await Job.findOneAndRemove({ _id: id });
+      if (!result) return resolve({ error: true, errorMsg: 'Job not found.' });
+
       resolve({ result });
     } catch (err) {
       reject(err);

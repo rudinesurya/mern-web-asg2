@@ -54,7 +54,8 @@ router.patch('/:jobId', passport, async (req, res) => {
  * @access: private
  */
 router.delete('/:jobId', passport, async (req, res) => {
-  const { result } = await jobs.deleteById(req.params.jobId);
+  const { result, error, errorMsg } = await jobs.deleteById(req.params.jobId);
+  if (error) return res.status(404).json(errorMsg);
   res.json(result);
 });
 

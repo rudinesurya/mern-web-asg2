@@ -119,7 +119,7 @@ describe('Authentication Test Suite', function () {
     });
   });
 
-  describe('Delete Account', () => {
+  describe('Deleting', () => {
     let user;
     let token;
 
