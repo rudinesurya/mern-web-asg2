@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const should = require('should');
 const mongoose = require('mongoose');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
@@ -55,7 +54,7 @@ describe('Jobs Test Suite', function () {
       res.status.should.equal(201);
     });
 
-    it('should return 401. not authorized', async () => {
+    it('should return 401. unauthenticated', async () => {
       token = '';
       const res = await exec();
       res.status.should.equal(401);
@@ -66,12 +65,6 @@ describe('Jobs Test Suite', function () {
       const res = await exec();
       res.status.should.equal(400);
     });
-
-    // it('should return 400. bad input', async () => {
-    //   payload.junk = 'i am a junk';
-    //   const res = await exec();
-    //   res.status.should.equal(400);
-    // });
   });
 
   describe('Getting', () => {
@@ -160,7 +153,7 @@ describe('Jobs Test Suite', function () {
       res.status.should.equal(400);
     });
 
-    it('should return 401. unauthorized user', async () => {
+    it('should return 401. unauthenticated', async () => {
       token = '';
       const res = await exec();
       res.status.should.equal(401);
@@ -191,7 +184,7 @@ describe('Jobs Test Suite', function () {
       res.status.should.equal(200);
     });
 
-    it('should return 401. not authorized', async () => {
+    it('should return 401. unauthenticated', async () => {
       token = '';
       const res = await exec();
       res.status.should.equal(401);

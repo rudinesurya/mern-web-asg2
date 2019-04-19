@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const should = require('should');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
 

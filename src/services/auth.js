@@ -65,7 +65,7 @@ module.exports.createProfileIfNew = function (user) {
       const { doc: profile } = await profiles.getDocByUserId(user._id);
 
       if (profile) {
-        await profiles.updateDoc(profile._id, { lastLogin: Date.now() });
+        await profiles.updateDocByUserId(user._id, { lastLogin: Date.now() });
       } else {
         const profileField = {
           user: user._id.toString(),

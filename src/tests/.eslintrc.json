@@ -2,6 +2,8 @@
   "rules": {
     "global-require": "off",
     "no-undef": "off",
-    "no-unused-vars": "off"
+    "no-unused-vars": "off",
+    "prefer-destructuring": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }

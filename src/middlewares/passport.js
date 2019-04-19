@@ -6,13 +6,12 @@ module.exports = function (req, res, next) {
     session: false,
   }, (err, user) => {
     if (err) {
-      console.log(err);
       return next(err);
     }
     if (!user) {
       return res.status(401).json({
         status: 'error',
-        error: 'UNAUTHORIZED_USER',
+        error: 'unauthenticated',
       });
     }
     // Forward user information to the next middleware

@@ -1,5 +1,4 @@
 const supertest = require('supertest');
-const should = require('should');
 const mongoose = require('mongoose');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
@@ -119,7 +118,7 @@ describe('Profiles Test Suite', function () {
       res.status.should.equal(404);
     });
 
-    it('should return 401. unauthorized user', async () => {
+    it('should return 401. unauthenticated', async () => {
       token = '';
       const res = await getCurrentProfile();
       res.status.should.equal(401);

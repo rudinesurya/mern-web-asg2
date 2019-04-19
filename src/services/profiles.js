@@ -1,4 +1,3 @@
-
 const Profile = require('../models/Profile').Model;
 
 // Validations
@@ -12,19 +11,6 @@ module.exports.getAllDocs = function () {
       const docs = await Profile.find()
         .populate('user', ['name', 'email', 'avatarUrl']);
       resolve({ docs });
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-module.exports.getDocById = function (id) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const doc = await Profile.findById(id)
-        .populate('user', ['name', 'email', 'avatarUrl']);
-      if (!doc) return resolve({ error: true, errorMsg: 'Profile not found.' });
-      resolve({ doc });
     } catch (err) {
       reject(err);
     }
@@ -63,20 +49,6 @@ module.exports.create = function (data) {
     if (error) return resolve({ error, errorMsg: error.details[0].message });
     try {
       const result = await new Profile(data).save();
-      resolve({ result });
-    } catch (err) {
-      reject(err);
-    }
-  });
-};
-
-module.exports.updateDoc = function (id, data) {
-  return new Promise(async (resolve, reject) => {
-    const { error } = validateUpdate(data);
-    if (error) return resolve({ error, errorMsg: error.details[0].message });
-
-    try {
-      const result = await Profile.findOneAndUpdate({ _id: id }, { $set: data }, { new: true });
       resolve({ result });
     } catch (err) {
       reject(err);
