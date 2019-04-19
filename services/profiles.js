@@ -1,5 +1,9 @@
-const Joi = require('joi');
+
 const Profile = require('../models/Profile').Model;
+
+// Validations
+const validateRegisteration = require('./validations/profileRegisteration');
+const validateUpdate = require('./validations/profileUpdate');
 
 
 module.exports.getAllDocs = function () {
@@ -55,7 +59,7 @@ module.exports.getDocByHandle = function (handle) {
 
 module.exports.create = function (data) {
   return new Promise(async (resolve, reject) => {
-    const { error } = validate(data);
+    const { error } = validateRegisteration(data);
     if (error) console.log(error);
     if (error) return resolve({ error, errorMsg: error.details[0].message });
     try {
@@ -69,7 +73,7 @@ module.exports.create = function (data) {
 
 module.exports.updateDoc = function (id, data) {
   return new Promise(async (resolve, reject) => {
-    const { error } = validate(data);
+    const { error } = validateUpdate(data);
     if (error) return resolve({ error, errorMsg: error.details[0].message });
 
     try {
@@ -83,7 +87,7 @@ module.exports.updateDoc = function (id, data) {
 
 module.exports.updateDocByUserId = function (id, data) {
   return new Promise(async (resolve, reject) => {
-    const { error } = validate(data);
+    const { error } = validateUpdate(data);
     if (error) return resolve({ error, errorMsg: error.details[0].message });
 
     try {
@@ -93,16 +97,4 @@ module.exports.updateDocByUserId = function (id, data) {
       reject(err);
     }
   });
-};
-
-// Validators
-const validate = (changes) => {
-  const schema = {
-    user: Joi.objectId(),
-    handle: Joi.string().min(3).max(50),
-    location: Joi.string().min(3).max(50),
-    bio: Joi.string().min(3).max(50),
-  };
-
-  return Joi.validate(changes, schema);
 };

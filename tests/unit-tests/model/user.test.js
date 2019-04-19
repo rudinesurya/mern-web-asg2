@@ -5,31 +5,31 @@ const mongoose = require('mongoose');
 const User = require('../../../models/User').Model;
 
 
-describe('user schema tests', () => {
-  const theUser = {
+describe('User Model Unit Tests', () => {
+  const theUserPayload = {
     name: 'test user',
     email: 'test@test.com',
     password: 'sosecret',
     avatarUrl: 'www.validurl.com/abc/def',
   };
 
-  it('should validate the profile', (done) => {
-    const m = new User(theUser);
+  it('should validate', (done) => {
+    const m = new User(theUserPayload);
     m.validate((err) => {
       should.not.exist(err);
-      m.name.toString().should.equal(theUser.name);
-      m.email.toString().should.equal(theUser.email);
-      m.password.toString().should.equal(theUser.password);
-      m.avatarUrl.toString().should.equal(theUser.avatarUrl);
+      m.name.toString().should.equal(theUserPayload.name);
+      m.email.toString().should.equal(theUserPayload.email);
+      m.password.toString().should.equal(theUserPayload.password);
+      m.avatarUrl.toString().should.equal(theUserPayload.avatarUrl);
       done();
     });
   });
 
   it('should require all missing required variables', (done) => {
-    const badUser = {
+    const badUserPayload = {
       message: 'This is not valid',
     };
-    const m = new User(badUser);
+    const m = new User(badUserPayload);
     m.validate((err) => {
       should.exist(err);
       const { errors } = err;

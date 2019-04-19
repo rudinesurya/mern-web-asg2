@@ -1,5 +1,10 @@
-const Joi = require('joi');
+
 const Job = require('../models/Job').Model;
+
+// Validations
+const validateRegisteration = require('./validations/jobRegisteration');
+const validateUpdate = require('./validations/jobUpdate');
+const validatePostComment = require('./validations/commentPost');
 
 
 module.exports.getAllDocs = function () {
@@ -191,19 +196,4 @@ module.exports.deleteComment = function (userId, jobId, commentId) {
       reject(err);
     }
   });
-};
-
-// Validators
-const validateRegisteration = require('../models/Job').validate;
-
-const validatePostComment = require('../models/Comment').validate;
-
-const validateUpdate = (changes) => {
-  const schema = {
-    title: Joi.string().min(3).max(50),
-    venue: Joi.string().min(3).max(50),
-    date: Joi.string().min(3).max(50),
-  };
-
-  return Joi.validate(changes, schema);
 };

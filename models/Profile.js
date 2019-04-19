@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Joi = require('joi');
 
 
 const ProfileSchema = new mongoose.Schema({
@@ -33,12 +32,3 @@ const ProfileSchema = new mongoose.Schema({
 });
 
 module.exports.Model = mongoose.model('profiles', ProfileSchema);
-
-module.exports.validate = (model) => {
-  const schema = {
-    user: Joi.objectId().required(),
-    handle: Joi.string().min(3).max(50).required(),
-  };
-
-  return Joi.validate(model, schema);
-};

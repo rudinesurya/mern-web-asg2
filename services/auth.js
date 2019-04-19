@@ -1,9 +1,12 @@
-const Joi = require('joi');
 const gravatar = require('gravatar');
 
 const User = require('../models/User').Model;
 const users = require('./users');
 const profiles = require('./profiles');
+
+// Validations
+const validateRegisteration = require('./validations/userRegisteration');
+const validateLogin = require('./validations/userLogin');
 
 
 module.exports.registerUser = function (data) {
@@ -77,25 +80,4 @@ module.exports.createProfileIfNew = function (user) {
       reject(err);
     }
   });
-};
-
-// Validators
-const validateRegisteration = (cred) => {
-  const schema = {
-    name: Joi.string().min(3).max(50).required(),
-    email: Joi.string().email({ minDomainAtoms: 2 }).required(),
-    password: Joi.string().min(3).max(50).required(),
-    password2: Joi.string().min(3).max(50).required(),
-  };
-
-  return Joi.validate(cred, schema);
-};
-
-const validateLogin = (cred) => {
-  const schema = {
-    email: Joi.string().email({ minDomainAtoms: 2 }).required(),
-    password: Joi.string().min(3).max(50).required(),
-  };
-
-  return Joi.validate(cred, schema);
 };

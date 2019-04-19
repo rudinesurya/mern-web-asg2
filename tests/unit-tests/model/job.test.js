@@ -3,32 +3,32 @@ const mongoose = require('mongoose');
 const Job = require('../../../models/Job').Model;
 
 
-describe('jobTests', () => {
+describe('Job Model Unit Tests', () => {
   const id = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
-  const theJob = {
+  const theJobPayload = {
     host: id,
     title: 'some job',
     venue: 'a place',
     date: 'some date',
   };
 
-  it('should validate the job', (done) => {
-    const m = new Job(theJob);
+  it('should validate', (done) => {
+    const m = new Job(theJobPayload);
     m.validate((err) => {
       should.not.exist(err);
-      m.host.should.equal(theJob.host);
-      m.title.should.equal(theJob.title);
-      m.venue.should.equal(theJob.venue);
-      m.date.should.equal(theJob.date);
+      m.host.should.equal(theJobPayload.host);
+      m.title.should.equal(theJobPayload.title);
+      m.venue.should.equal(theJobPayload.venue);
+      m.date.should.equal(theJobPayload.date);
       done();
     });
   });
 
   it('should require all missing required variables', (done) => {
-    const badJob = {
+    const badJobPayload = {
       message: 'This is not valid',
     };
-    const m = new Job(badJob);
+    const m = new Job(badJobPayload);
     m.validate((err) => {
       should.exist(err);
       const { errors } = err;
@@ -40,8 +40,8 @@ describe('jobTests', () => {
     });
   });
 
-  it('should add a comment to a job', (done) => {
-    const m = new Job(theJob);
+  it('should add a comment', (done) => {
+    const m = new Job(theJobPayload);
     const id = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
     m.comments.push({
       user: id,
@@ -55,8 +55,8 @@ describe('jobTests', () => {
     });
   });
 
-  it('should add 2 comments to a job', (done) => {
-    const m = new Job(theJob);
+  it('should add 2 comments', (done) => {
+    const m = new Job(theJobPayload);
     const id = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
     m.comments.push({
       user: id,
@@ -74,7 +74,7 @@ describe('jobTests', () => {
   });
 
   it('should require all missing required variables in a comment', (done) => {
-    const m = new Job(theJob);
+    const m = new Job(theJobPayload);
     m.comments.push({
       message: 'This is not valid',
     });
@@ -87,8 +87,8 @@ describe('jobTests', () => {
     });
   });
 
-  it('should add a participant to a job', (done) => {
-    const m = new Job(theJob);
+  it('should add a participant', (done) => {
+    const m = new Job(theJobPayload);
     const id = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
     m.participants.push({
       user: id,
@@ -100,8 +100,8 @@ describe('jobTests', () => {
     });
   });
 
-  it('should add 2 participants to a job', (done) => {
-    const m = new Job(theJob);
+  it('should add 2 participants', (done) => {
+    const m = new Job(theJobPayload);
     const id = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
     const id2 = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
     m.participants.push({
@@ -118,7 +118,7 @@ describe('jobTests', () => {
   });
 
   it('should require all missing required variables in a participant', (done) => {
-    const m = new Job(theJob);
+    const m = new Job(theJobPayload);
     m.participants.push({
       message: 'This is not valid',
     });
