@@ -10,9 +10,9 @@ const users = require('../../services/users');
  * @access: public
  */
 router.post('/', async (req, res) => {
-  const { user, error, errorMsg } = await auth.registerUser(req.body);
+  const { user, token, error, errorMsg } = await auth.registerUser(req.body);
   if (error) return res.status(400).json(errorMsg);
-  res.status(201).json(user);
+  res.status(201).json({ user, token });
 });
 
 /**

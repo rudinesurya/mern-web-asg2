@@ -17,10 +17,10 @@ describe('User Model Unit Tests', () => {
     const m = new User(theUserPayload);
     m.validate((err) => {
       should.not.exist(err);
-      m.name.toString().should.equal(theUserPayload.name);
-      m.email.toString().should.equal(theUserPayload.email);
-      m.password.toString().should.equal(theUserPayload.password);
-      m.avatarUrl.toString().should.equal(theUserPayload.avatarUrl);
+      m.name.should.equal(theUserPayload.name);
+      m.email.should.equal(theUserPayload.email);
+      m.password.should.equal(theUserPayload.password);
+      m.avatarUrl.should.equal(theUserPayload.avatarUrl);
       done();
     });
   });

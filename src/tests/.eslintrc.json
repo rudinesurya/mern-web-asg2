@@ -1,8 +1,7 @@
 {
-  "env": {
-    "mocha": true
-  },
   "rules": {
+    "global-require": "off",
+    "no-undef": "off",
     "no-unused-vars": "off"
   }
 }

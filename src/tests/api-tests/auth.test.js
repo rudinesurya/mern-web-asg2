@@ -1,6 +1,7 @@
 const supertest = require('supertest');
 const should = require('should');
 const mockgoose = require('../helper/mockgoose-helper');
+const User = require('../../models/User').Model;
 
 
 describe('Authentication Test Suite', function () {
@@ -15,14 +16,13 @@ describe('Authentication Test Suite', function () {
     await require('../helper/server').close();
   });
 
-  const theUser = {
+  const theUserPayload = {
     name: 'testuser',
     email: 'test@test.com',
     password: 'secret',
-    password2: 'secret',
   };
 
-  const theUserLogin = {
+  const theUserLoginPayload = {
     email: 'test@test.com',
     password: 'secret',
   };
@@ -36,77 +36,111 @@ describe('Authentication Test Suite', function () {
     it('should register new user', async () => {
       const res = await supertest(server)
         .post('/api/users/')
-        .send(theUser)
-        .expect(201);
+        .send({ ...theUserPayload, password2: theUserPayload.password });
 
-      const { name, email } = res.body;
-      name.should.equal(theUser.name);
-      email.should.equal(theUser.email);
+      res.status.should.equal(201);
+
+      res.body.should.have.property('user');
+      const { user } = res.body;
+      user.name.should.equal(theUserPayload.name);
+      user.email.should.equal(theUserPayload.email);
     });
 
-    it('should require all missing required variables', async () => {
-      const { email, ...badUser } = theUser;
+    it('should return 400. missing required variables', async () => {
+      const { email, ...badUserPayload } = theUserPayload;
 
-      await supertest(server)
+      const res = await supertest(server)
         .post('/api/users/')
-        .send(badUser)
-        .expect(400);
+        .send(badUserPayload);
+
+      res.status.should.equal(400);
     });
 
-    it('should require email in right format', async () => {
-      const badUser = { ...theUser, email: 'test' };
+    it('should return 400. require email in right format', async () => {
+      const badUser = { ...theUserPayload, email: 'test' };
 
-      await supertest(server)
+      const res = await supertest(server)
         .post('/api/users/')
-        .send(badUser)
-        .expect(400);
+        .send(badUser);
+
+      res.status.should.equal(400);
     });
   });
 
   describe('Login', () => {
     // Create a user
+    let theUser;
     before(async () => {
-      await supertest(server)
-        .post('/api/users/')
-        .send(theUser);
+      await mockgoose.reset();
+      theUser = await new User(theUserPayload).save();
     });
 
     it('should login', async () => {
       const res = await supertest(server)
         .post('/api/users/login')
-        .send(theUserLogin)
-        .expect(200);
+        .send(theUserLoginPayload);
+
+      res.status.should.equal(200);
     });
 
-    it('should return 401 when token is null', async () => {
+    it('should return 401. token is invalid', async () => {
       const token = '';
-      await supertest(server)
-        .get('/api/users/current')
-        .set('Authorization', `bearer ${token}`)
-        .expect(401);
-    });
-
-    it('should return 200 when token is valid', async () => {
       const res = await supertest(server)
-        .post('/api/users/login')
-        .send(theUserLogin)
-        .expect(200);
-
-      const token = res.body;
-
-      await supertest(server)
         .get('/api/users/current')
-        .set('Authorization', `bearer ${token}`)
-        .expect(200);
+        .set('Authorization', `bearer ${token}`);
+
+      res.status.should.equal(401);
     });
 
-    it('should not login with wrong password', async () => {
-      const badUserLogin = { ...theUserLogin, password: 'wrong' };
+    it('should validate token', async () => {
+      const token = await theUser.generateAuthToken();
+
+      const res = await supertest(server)
+        .get('/api/users/current')
+        .set('Authorization', `bearer ${token}`);
+
+      res.status.should.equal(200);
+    });
+
+    it('should return 400. wrong password', async () => {
+      const badUserLogin = { ...theUserLoginPayload, password: 'wrong' };
 
       const res = await supertest(server)
         .post('/api/users/login')
-        .send(badUserLogin)
-        .expect(400);
+        .send(badUserLogin);
+
+      res.status.should.equal(400);
+    });
+  });
+
+  describe('Delete Account', () => {
+    // Clean up before each test
+    beforeEach(async () => {
+      await mockgoose.reset();
+    });
+
+    it('should delete', async () => {
+      // Create then delete myself
+      const user = await new User(theUserPayload).save();
+      const token = await user.generateAuthToken();
+
+      const res = await supertest(server)
+        .delete('/api/users/current')
+        .set('Authorization', `bearer ${token}`);
+
+      res.status.should.equal(200);
+    });
+
+    it('should return 401. not logged in', async () => {
+      // Create then delete myself
+      const user = await new User(theUserPayload).save();
+      const token = '';
+
+      const res = await supertest(server)
+        .delete('/api/users/current')
+        .set('Authorization', `bearer ${token}`);
+
+      res.status.should.equal(401);
     });
   });
 });
