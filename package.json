@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --exec babel-node server --require babel-core/register --require babel-polyfill",
-    "dev": "cross-env NODE_ENV=development nodemon server",
+    "start": "node --exec babel-node ./app/server --require babel-core/register --require babel-polyfill",
+    "dev": "cross-env NODE_ENV=development nodemon ./app/server",
     "eslint": "eslint . --ext .js",
-    "unit-test": "cross-env NODE_ENV=test mocha ./tests/unit-tests/**/*.js --exit || true",
-    "api-test": "cross-env NODE_ENV=test mocha ./tests/api-tests/**/*.js --exit || true",
+    "unit-test": "cross-env NODE_ENV=test mocha ./app/tests/unit-tests/**/*.js --exit || true",
+    "api-test": "cross-env NODE_ENV=test mocha ./app/tests/api-tests/**/*.js --exit || true",
     "coverage": "cross-env NODE_ENV=test nyc --reporter=html mocha \"{,!(node_modules)/**/}*.test.js\" --exit || true"
   },
   "dependencies": {
