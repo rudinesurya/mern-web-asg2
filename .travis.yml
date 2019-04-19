@@ -2,5 +2,11 @@ dist: trusty
 language: node_js
 node_js:
   - stable
+notifications:
+  email:
+    recipients:
+      - rudinesurya@gmail.com
+    on_success: never
+    on_failure: always
 script:
   - npm run coverage
