@@ -8,8 +8,14 @@ describe('Job Model Unit Tests', () => {
   const theJobPayload = {
     host: id,
     title: 'some job',
-    venue: 'a place',
-    date: 'some date',
+    venue: {
+      name: 'place name',
+      location: {
+        type: 'Point',
+        coordinates: [-100, 30],
+      },
+    },
+    date: new Date(),
   };
 
   it('should validate', (done) => {
@@ -18,7 +24,7 @@ describe('Job Model Unit Tests', () => {
       should.not.exist(err);
       m.host.should.equal(theJobPayload.host);
       m.title.should.equal(theJobPayload.title);
-      m.venue.should.equal(theJobPayload.venue);
+      m.venue.should.match(theJobPayload.venue);
       m.date.should.equal(theJobPayload.date);
       done();
     });

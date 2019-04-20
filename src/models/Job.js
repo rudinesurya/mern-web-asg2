@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const CommentSchema = require('./Comment').Schema;
+const LocationSchema = require('./Location').Schema;
 const ParticipantSchema = require('./Participant').Schema;
 
 
@@ -14,11 +15,11 @@ const JobSchema = new mongoose.Schema({
     required: true,
   },
   venue: {
-    type: String,
+    type: LocationSchema,
     required: true,
   },
   date: {
-    type: String,
+    type: Date,
     required: true,
   },
 

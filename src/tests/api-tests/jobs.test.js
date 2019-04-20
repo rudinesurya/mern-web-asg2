@@ -1,4 +1,5 @@
 const supertest = require('supertest');
+const should = require('should');
 const mongoose = require('mongoose');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
@@ -19,8 +20,14 @@ describe('Jobs Test Suite', function () {
   const theJobPayload = {
     host: new mongoose.Types.ObjectId(),
     title: 'the title',
-    venue: 'the venue',
-    date: 'the date',
+    venue: {
+      name: 'place name',
+      location: {
+        type: 'Point',
+        coordinates: [-100, 30],
+      },
+    },
+    date: new Date(),
   };
 
   before(async () => {
@@ -131,8 +138,14 @@ describe('Jobs Test Suite', function () {
       jobId = job._id;
       payload = {
         title: 'new title',
-        venue: 'new venue',
-        date: 'new date',
+        venue: {
+          name: 'new place name',
+          location: {
+            type: 'Point',
+            coordinates: [-100, 30],
+          },
+        },
+        date: new Date(),
       };
     });
 

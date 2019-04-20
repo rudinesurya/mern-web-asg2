@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const LocationSchema = require('./Location').Schema;
 
 
 const ProfileSchema = new mongoose.Schema({
@@ -14,8 +15,7 @@ const ProfileSchema = new mongoose.Schema({
     required: true,
   },
   location: {
-    type: String,
-    default: '',
+    type: LocationSchema,
   },
   bio: {
     type: String,

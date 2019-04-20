@@ -1,4 +1,5 @@
 const supertest = require('supertest');
+const should = require('should');
 
 
 describe('Internal Server Test Suite', function () {

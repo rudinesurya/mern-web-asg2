@@ -153,7 +153,7 @@ module.exports.leave = function (userId, jobId) {
 module.exports.postComment = function (userId, jobId, data) {
   return new Promise(async (resolve, reject) => {
     const newComment = {
-      user: userId,
+      user: userId.toString(),
       text: data.text,
     };
 

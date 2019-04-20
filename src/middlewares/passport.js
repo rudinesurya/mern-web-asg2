@@ -15,7 +15,8 @@ module.exports = function (req, res, next) {
       });
     }
     // Forward user information to the next middleware
-    req.user = { ...user, _id: user._id.toString() };
+    const { _id, email, name } = user;
+    req.user = { _id: _id.toString(), email, name };
     next();
   })(req, res, next);
 };

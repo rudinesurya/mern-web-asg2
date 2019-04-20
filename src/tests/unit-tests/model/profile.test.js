@@ -8,7 +8,13 @@ describe('Profile Model Unit Tests', () => {
   const theProfilePayload = {
     user: id,
     handle: id.toString(), // default handle is the user id
-    location: 'a place',
+    location: {
+      name: 'place name',
+      location: {
+        type: 'Point',
+        coordinates: [-100, 30],
+      },
+    },
     bio: 'something about me',
   };
 
@@ -18,7 +24,7 @@ describe('Profile Model Unit Tests', () => {
       should.not.exist(err);
       m.user.should.equal(theProfilePayload.user);
       m.handle.should.equal(theProfilePayload.handle);
-      m.location.should.equal(theProfilePayload.location);
+      m.location.should.match(theProfilePayload.location);
       m.bio.should.equal(theProfilePayload.bio);
       done();
     });

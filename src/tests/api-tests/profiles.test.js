@@ -1,4 +1,5 @@
 const supertest = require('supertest');
+const should = require('should');
 const mongoose = require('mongoose');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
@@ -19,7 +20,13 @@ describe('Profiles Test Suite', function () {
   const theProfilePayload = {
     user: new mongoose.Types.ObjectId(),
     handle: 'theHandle',
-    location: 'theLocation',
+    location: {
+      name: 'place name',
+      location: {
+        type: 'Point',
+        coordinates: [-100, 30],
+      },
+    },
     bio: 'theBio',
   };
 
@@ -79,7 +86,13 @@ describe('Profiles Test Suite', function () {
       const newProfilePayload = {
         user: new mongoose.Types.ObjectId(),
         handle: 'theHandle2',
-        location: 'theLocation2',
+        location: {
+          name: 'place name 2',
+          location: {
+            type: 'Point',
+            coordinates: [-100, 30],
+          },
+        },
         bio: 'theBio2',
       };
 
@@ -150,7 +163,13 @@ describe('Profiles Test Suite', function () {
     beforeEach(async () => {
       payload = {
         handle: 'new handle',
-        location: 'new location',
+        location: {
+          name: 'new place name',
+          location: {
+            type: 'Point',
+            coordinates: [-120, 30],
+          },
+        },
         bio: 'new bio',
       };
       token = await user.generateAuthToken();
