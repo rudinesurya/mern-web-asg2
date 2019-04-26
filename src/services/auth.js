@@ -14,7 +14,7 @@ module.exports.registerUser = function (data) {
     const { error } = validateRegisteration(data);
     if (error) return resolve({ error, errorMsg: error.details[0].message });
 
-    const { name, email, password } = data;
+    const { name, email, password, isAdmin } = data;
     const avatarUrl = gravatar.url(email, {
       s: '200',
       r: 'pg',
@@ -26,6 +26,7 @@ module.exports.registerUser = function (data) {
       email,
       password,
       avatarUrl,
+      isAdmin,
     });
 
     try {

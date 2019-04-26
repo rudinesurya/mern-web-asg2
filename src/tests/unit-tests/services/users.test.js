@@ -19,7 +19,7 @@ describe('Users Service Unit Tests', () => {
   let findOneAndRemoveStubbed;
 
   before(() => {
-    sandbox = sinon.sandbox;
+    sandbox = sinon.createSandbox();
     findOneStubbed = sandbox.stub(mongoose.Model, 'findOne');
     findOneAndRemoveStubbed = sandbox.stub(mongoose.Model, 'findOneAndRemove');
 

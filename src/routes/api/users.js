@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const passport = require('../../middlewares/passport');
+const admin = require('../../middlewares/admin');
 const auth = require('../../services/auth');
 const users = require('../../services/users');
 
@@ -48,6 +49,18 @@ router.get('/current', passport, async (req, res) => {
  */
 router.delete('/current', passport, async (req, res) => {
   const { result } = await users.deleteById(req.user._id);
+  res.json(result);
+});
+
+module.exports = router;
+
+/**
+ * @route:  DELETE api/users/:id
+ * @desc:   Delete user
+ * @access: private, admin only
+ */
+router.delete('/:id', [passport, admin], async (req, res) => {
+  const { result } = await users.deleteById(req.params.id);
   res.json(result);
 });
 
