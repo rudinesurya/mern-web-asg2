@@ -1,11 +1,13 @@
 const express = require('express');
 const config = require('config');
+const cors = require('cors');
 const db = require('./setup/db');
 const setupLogging = require('./setup/logging');
 const setupRouting = require('./setup/routes');
 require('./setup/extras');
 
 const app = express();
+app.use(cors());
 
 setupLogging(app); // Setup logging
 setupRouting(app); // Setup routing
