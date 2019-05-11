@@ -13,7 +13,6 @@ let server;
 
 setupRouting(app); // Setup routing
 
-
 module.exports.initialize = () => new Promise(async (resolve, reject) => {
   // Connect to DB
   mockgoose.prepareStorage()

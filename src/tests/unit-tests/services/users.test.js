@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const User = require('../../../models/User').Model;
 const users = require('../../../services/users');
 
-
 describe('Users Service Unit Tests', () => {
   const theUser = {
     _id: new mongoose.Types.ObjectId(),

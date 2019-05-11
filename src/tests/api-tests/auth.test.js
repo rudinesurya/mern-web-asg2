@@ -3,7 +3,6 @@ const should = require('should');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
 
-
 describe('Authentication Test Suite', function () {
   let server;
   this.timeout(120000);
@@ -46,16 +45,16 @@ describe('Authentication Test Suite', function () {
       user.email.should.equal(theUserPayload.email);
     });
 
-    it('should return 400. missing required variables', async () => {
+    it('should return 422. missing required variables', async () => {
       payload.email = '';
       const res = await exec();
-      res.status.should.equal(400);
+      res.status.should.equal(422);
     });
 
-    it('should return 400. require email in right format', async () => {
+    it('should return 422. require email in right format', async () => {
       payload.email = 'testemail';
       const res = await exec();
-      res.status.should.equal(400);
+      res.status.should.equal(422);
     });
   });
 
@@ -82,10 +81,10 @@ describe('Authentication Test Suite', function () {
       res.status.should.equal(200);
     });
 
-    it('should return 400. wrong password', async () => {
+    it('should return 401. wrong password', async () => {
       payload.password = 'wrongpw';
       const res = await exec();
-      res.status.should.equal(400);
+      res.status.should.equal(401);
     });
   });
 

@@ -5,7 +5,6 @@ const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
 const Profile = require('../../models/Profile').Model;
 
-
 describe('Profiles Test Suite', function () {
   let server;
   this.timeout(120000);
@@ -56,16 +55,16 @@ describe('Profiles Test Suite', function () {
       res.status.should.equal(201);
     });
 
-    it('should return 400. bad input', async () => {
+    it('should return 422. bad input', async () => {
       payload.handle = '';
       const res = await exec();
-      res.status.should.equal(400);
+      res.status.should.equal(422);
     });
 
-    it('should return 400. bad input', async () => {
+    it('should return 422. bad input', async () => {
       payload.junk = 'i am a junk';
       const res = await exec();
-      res.status.should.equal(400);
+      res.status.should.equal(422);
     });
   });
 
@@ -186,10 +185,10 @@ describe('Profiles Test Suite', function () {
       res.status.should.equal(200);
     });
 
-    it('should return 400. bad input', async () => {
+    it('should return 422. bad input', async () => {
       payload = { junk: 'i am a junk' };
       const res = await exec();
-      res.status.should.equal(400);
+      res.status.should.equal(422);
     });
   });
 });

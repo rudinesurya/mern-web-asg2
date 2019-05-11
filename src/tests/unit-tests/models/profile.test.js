@@ -2,7 +2,6 @@ const should = require('should');
 const mongoose = require('mongoose');
 const Profile = require('../../../models/Profile').Model;
 
-
 describe('Profile Model Unit Tests', () => {
   const id = mongoose.Types.ObjectId(); // generates pseudo random ObjectID
   const theProfilePayload = {

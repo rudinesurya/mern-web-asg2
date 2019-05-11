@@ -1,5 +1,5 @@
 const passport = require('passport');
-
+const Boom = require('@hapi/boom');
 
 module.exports = function (req, res, next) {
   return passport.authenticate('jwt', {
@@ -9,10 +9,7 @@ module.exports = function (req, res, next) {
       return next(err);
     }
     if (!user) {
-      return res.status(401).json({
-        status: 'error',
-        error: 'unauthenticated',
-      });
+      return next(Boom.unauthorized('User is not authenticated'));
     }
     // Forward user information to the next middleware
     const {

@@ -1,7 +1,6 @@
 const supertest = require('supertest');
 const should = require('should');
 
-
 describe('Internal Server Test Suite', function () {
   let server;
   this.timeout(120000);
@@ -18,8 +17,8 @@ describe('Internal Server Test Suite', function () {
     .get('/api/abcd');
 
 
-  it('should return 500. invalid url', async () => {
+  it('should return 404. invalid url', async () => {
     const res = await exec();
-    res.status.should.equal(500);
+    res.status.should.equal(404);
   });
 });

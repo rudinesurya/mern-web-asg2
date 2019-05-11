@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('config');
 
-
 module.exports.DBConnectMongoose = function () {
   return new Promise((async (resolve, reject) => {
     mongoose.Promise = global.Promise;

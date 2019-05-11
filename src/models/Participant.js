@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const ParticipantSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,

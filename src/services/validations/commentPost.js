@@ -1,11 +1,18 @@
 const Joi = require('joi');
 
-
 module.exports = (input) => {
   const schema = {
     user: Joi.objectId().required(),
     text: Joi.string().min(3).max(200).required(),
   };
 
-  return Joi.validate(input, schema);
+  const { error } = Joi.validate(input, schema, { abortEarly: false });
+  let result = {};
+  if (error) {
+    result = error.details.reduce((map, obj) => {
+      map[obj.path] = obj.message;
+      return map;
+    }, {});
+  }
+  return result;
 };

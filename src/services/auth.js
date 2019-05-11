@@ -1,6 +1,8 @@
 const gravatar = require('gravatar');
-
+const Boom = require('@hapi/boom');
+const _ = require('lodash');
 const User = require('../models/User').Model;
+const Profile = require('../models/Profile').Model;
 const users = require('./users');
 const profiles = require('./profiles');
 
@@ -8,13 +10,16 @@ const profiles = require('./profiles');
 const validateRegisteration = require('./validations/userRegisteration');
 const validateLogin = require('./validations/userLogin');
 
-
 module.exports.registerUser = function (data) {
   return new Promise(async (resolve, reject) => {
-    const { error } = validateRegisteration(data);
-    if (error) return resolve({ error, errorMsg: error.details[0].message });
+    const errors = validateRegisteration(data);
+    if (!_.isEmpty(errors)) {
+      return reject(Boom.badData('Bad data', errors));
+    }
 
-    const { name, email, password, isAdmin } = data;
+    const {
+      name, email, password, isAdmin,
+    } = data;
     const avatarUrl = gravatar.url(email, {
       s: '200',
       r: 'pg',
@@ -34,28 +39,30 @@ module.exports.registerUser = function (data) {
       const token = await user.generateAuthToken();
       resolve({ user, token });
     } catch (err) {
-      if (err.code === 11000) return resolve({ error: err, errorMsg: err.message });
-      reject(err);
+      if (err.code === 11000) return reject(Boom.conflict('User already exists'));
+      reject(Boom.boomify(err));
     }
   });
 };
 
 module.exports.loginUser = function (data) {
   return new Promise(async (resolve, reject) => {
-    const { error } = validateLogin(data);
-    if (error) return resolve({ error, errorMsg: error.details[0].message });
+    const errors = validateLogin(data);
+    if (!_.isEmpty(errors)) {
+      return reject(Boom.badData('Bad data', errors));
+    }
 
     try {
       const { doc: user } = await users.getDocByEmail(data.email);
-      if (!user) return resolve({ error: true, errorMsg: 'User not found.' });
+      if (!user) return reject(Boom.notFound('User not found'));
 
       const isMatch = await user.comparePassword(data.password);
-      if (!isMatch) return resolve({ error: true, errorMsg: 'Wrong Password.' });
+      if (!isMatch) return reject(Boom.unauthorized('Wrong password'));
 
       const token = await user.generateAuthToken();
       resolve({ token, user });
     } catch (err) {
-      reject(err);
+      reject(Boom.boomify(err));
     }
   });
 };
@@ -63,8 +70,7 @@ module.exports.loginUser = function (data) {
 module.exports.createProfileIfNew = function (user) {
   return new Promise(async (resolve, reject) => {
     try {
-      const { doc: profile } = await profiles.getDocByUserId(user._id);
-
+      const profile = await Profile.findOne({ user: user._id });
       if (profile) {
         await profiles.updateDocByUserId(user._id, { lastLogin: Date.now() });
       } else {
@@ -78,7 +84,7 @@ module.exports.createProfileIfNew = function (user) {
 
       resolve();
     } catch (err) {
-      reject(err);
+      reject(Boom.boomify(err));
     }
   });
 };

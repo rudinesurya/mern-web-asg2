@@ -3,7 +3,6 @@ const CommentSchema = require('./Comment').Schema;
 const LocationSchema = require('./Location').Schema;
 const ParticipantSchema = require('./Participant').Schema;
 
-
 const JobSchema = new mongoose.Schema({
   host: {
     type: mongoose.Schema.Types.ObjectId,

@@ -1,6 +1,5 @@
 const Joi = require('joi');
 
-
 module.exports = (input) => {
   const locationSchema = Joi.object().keys({
     name: Joi.string(),
@@ -16,5 +15,13 @@ module.exports = (input) => {
     date: Joi.date(),
   };
 
-  return Joi.validate(input, schema);
+  const { error } = Joi.validate(input, schema, { abortEarly: false });
+  let result = {};
+  if (error) {
+    result = error.details.reduce((map, obj) => {
+      map[obj.path] = obj.message;
+      return map;
+    }, {});
+  }
+  return result;
 };

@@ -18,8 +18,7 @@ router.get('/', async (req, res) => {
  * @access: admin
  */
 router.post('/', async (req, res) => {
-  const { result, error, errorMsg } = await profiles.create(req.body);
-  if (error) return res.status(400).json(errorMsg);
+  const { result } = await profiles.create(req.body);
   res.status(201).json(result);
 });
 
@@ -29,8 +28,7 @@ router.post('/', async (req, res) => {
  * @access: private
  */
 router.get('/current', passport, async (req, res) => {
-  const { doc, error, errorMsg } = await profiles.getDocByUserId(req.user._id);
-  if (error) return res.status(404).json(errorMsg);
+  const { doc } = await profiles.getDocByUserId(req.user._id);
   res.json(doc);
 });
 
@@ -40,8 +38,7 @@ router.get('/current', passport, async (req, res) => {
  * @access: public
  */
 router.get('/:handle', async (req, res) => {
-  const { doc, error, errorMsg } = await profiles.getDocByHandle(req.params.handle);
-  if (error) return res.status(404).json(errorMsg);
+  const { doc } = await profiles.getDocByHandle(req.params.handle);
   res.json(doc);
 });
 
@@ -51,8 +48,7 @@ router.get('/:handle', async (req, res) => {
  * @access: private
  */
 router.post('/current', passport, async (req, res) => {
-  const { result, error, errorMsg } = await profiles.updateDocByUserId(req.user._id, req.body);
-  if (error) return res.status(400).json(errorMsg);
+  const { result } = await profiles.updateDocByUserId(req.user._id, req.body);
   res.json(result);
 });
 

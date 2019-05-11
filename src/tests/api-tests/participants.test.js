@@ -5,7 +5,6 @@ const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
 const Job = require('../../models/Job').Model;
 
-
 describe('Participants Test Suite', function () {
   let server;
   this.timeout(120000);

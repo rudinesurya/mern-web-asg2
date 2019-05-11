@@ -3,7 +3,6 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -28,10 +27,6 @@ const UserSchema = new mongoose.Schema({
   },
 
   createdDate: {
-    type: Date,
-    default: Date.now(),
-  },
-  lastLogin: {
     type: Date,
     default: Date.now(),
   },

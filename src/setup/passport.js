@@ -11,7 +11,6 @@ const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = secret;
 
-
 const strategy = new Strategy(opts, (payload, done) => {
   User.findById(payload._id)
     .then((user) => {

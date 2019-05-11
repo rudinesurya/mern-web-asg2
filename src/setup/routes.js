@@ -6,7 +6,6 @@ const profiles = require('../routes/api/profiles');
 const jobs = require('../routes/api/jobs');
 const error = require('../middlewares/error');
 
-
 module.exports = function (app) {
   // Assign middlewares
   app.use(express.json());

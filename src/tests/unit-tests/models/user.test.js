@@ -4,7 +4,6 @@ const config = require('config');
 const mongoose = require('mongoose');
 const User = require('../../../models/User').Model;
 
-
 describe('User Model Unit Tests', () => {
   const theUserPayload = {
     name: 'test user',

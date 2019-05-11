@@ -4,7 +4,6 @@ const admin = require('../../middlewares/admin');
 const auth = require('../../services/auth');
 const users = require('../../services/users');
 
-
 /**
  * @route:  POST api/users/
  * @desc:   Register a new user
@@ -12,9 +11,8 @@ const users = require('../../services/users');
  */
 router.post('/', async (req, res) => {
   const {
-    user, token, error, errorMsg,
+    token, user,
   } = await auth.registerUser(req.body);
-  if (error) return res.status(400).json(errorMsg);
   // Create a user profile if a new user logged in
   await auth.createProfileIfNew(user);
   res.status(201).json({ user, token });
@@ -27,12 +25,11 @@ router.post('/', async (req, res) => {
  */
 router.post('/login', async (req, res) => {
   const {
-    token, user, error, errorMsg,
+    token, user,
   } = await auth.loginUser(req.body);
-  if (error) return res.status(400).json(errorMsg);
   // Create a user profile if a new user logged in
   await auth.createProfileIfNew(user);
-  res.json(token);
+  res.json({ token });
 });
 
 /**

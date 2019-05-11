@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const LocationSchema = require('./Location').Schema;
 
-
 const ProfileSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,6 +19,10 @@ const ProfileSchema = new mongoose.Schema({
   bio: {
     type: String,
     default: '',
+  },
+  lastLogin: {
+    type: Date,
+    default: Date.now(),
   },
   createdDate: {
     type: Date,
