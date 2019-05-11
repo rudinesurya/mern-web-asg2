@@ -15,6 +15,8 @@ router.post('/', async (req, res) => {
     user, token, error, errorMsg,
   } = await auth.registerUser(req.body);
   if (error) return res.status(400).json(errorMsg);
+  // Create a user profile if a new user logged in
+  await auth.createProfileIfNew(user);
   res.status(201).json({ user, token });
 });
 

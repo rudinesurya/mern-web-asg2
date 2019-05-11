@@ -13,7 +13,7 @@ module.exports = (input) => {
   const schema = {
     user: Joi.objectId().required(),
     handle: Joi.string().min(3).max(50).required(),
-    location: locationSchema.required(),
+    location: locationSchema,
     bio: Joi.string().min(3).max(50),
   };
 
