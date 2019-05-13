@@ -10,10 +10,12 @@ module.exports = (input) => {
   });
 
   const schema = {
-    host: Joi.objectId().required(),
     title: Joi.string().min(3).max(50).required(),
+    payout: Joi.number().required(),
     venue: locationSchema.required(),
     date: Joi.date().required(),
+    description: Joi.string().min(3).max(50),
+    urgency: Joi.boolean(),
   };
 
   const { error } = Joi.validate(input, schema, { abortEarly: false });

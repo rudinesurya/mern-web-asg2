@@ -17,8 +17,8 @@ describe('Comments Test Suite', function () {
   };
 
   const theJobPayload = {
-    host: new mongoose.Types.ObjectId(),
     title: 'the title',
+    payout: 500,
     venue: {
       name: 'place name',
       location: {
@@ -52,7 +52,6 @@ describe('Comments Test Suite', function () {
       job = await new Job({ ...theJobPayload, host: user._id }).save();
       jobId = job._id;
       payload = {
-        user: user._id,
         text: 'new comment',
       };
     });

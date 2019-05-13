@@ -13,6 +13,10 @@ const JobSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  payout: {
+    type: Number,
+    required: true,
+  },
   venue: {
     type: LocationSchema,
     required: true,
@@ -20,6 +24,14 @@ const JobSchema = new mongoose.Schema({
   date: {
     type: Date,
     required: true,
+  },
+  description: {
+    type: String,
+    default: '',
+  },
+  urgency: {
+    type: Boolean,
+    default: false,
   },
 
   participants: [ParticipantSchema],

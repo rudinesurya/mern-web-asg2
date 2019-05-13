@@ -27,11 +27,8 @@ module.exports.registerUser = function (data) {
     });
 
     const newUser = new User({
-      name,
-      email,
-      password,
+      ...data,
       avatarUrl,
-      isAdmin,
     });
 
     try {
@@ -75,11 +72,10 @@ module.exports.createProfileIfNew = function (user) {
         await profiles.updateDocByUserId(user._id, { lastLogin: Date.now() });
       } else {
         const profileField = {
-          user: user._id.toString(),
           handle: user._id.toString(),
         };
 
-        await profiles.create(profileField);
+        await profiles.create(user._id, profileField);
       }
 
       resolve();

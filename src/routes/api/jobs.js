@@ -4,11 +4,22 @@ const jobs = require('../../services/jobs');
 
 /**
  * @route   GET api/jobs/
+ * @query   hostId, sortBy, limit, skip
  * @desc    Get all the jobs
  * @access: public
  */
 router.get('/', async (req, res) => {
-  const { docs } = await jobs.getAllDocs();
+  const {
+    hostId, sortBy, limit, skip,
+  } = req.query;
+
+  const match = {};
+
+  if (hostId) {
+    match.host = hostId;
+  }
+
+  const { docs } = await jobs.getAllDocs(match, sortBy, Number(limit), Number(skip));
   res.json(docs);
 });
 

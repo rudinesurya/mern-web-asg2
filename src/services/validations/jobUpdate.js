@@ -11,8 +11,11 @@ module.exports = (input) => {
 
   const schema = {
     title: Joi.string().min(3).max(50),
-    venue: locationSchema.required(),
+    payout: Joi.number(),
+    venue: locationSchema,
     date: Joi.date(),
+    description: Joi.string().min(3).max(50),
+    urgency: Joi.boolean(),
   };
 
   const { error } = Joi.validate(input, schema, { abortEarly: false });

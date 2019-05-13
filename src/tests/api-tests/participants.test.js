@@ -17,8 +17,8 @@ describe('Participants Test Suite', function () {
   };
 
   const theJobPayload = {
-    host: new mongoose.Types.ObjectId(),
     title: 'the title',
+    payout: 123,
     venue: {
       name: 'place name',
       location: {

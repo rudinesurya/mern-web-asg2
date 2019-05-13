@@ -17,7 +17,6 @@ describe('Profiles Test Suite', function () {
   };
 
   const theProfilePayload = {
-    user: new mongoose.Types.ObjectId(),
     handle: 'theHandle',
     location: {
       name: 'place name',
@@ -39,15 +38,20 @@ describe('Profiles Test Suite', function () {
 
   describe('Registeration', () => {
     let payload;
+    let user;
+    let token;
 
     beforeEach(async () => {
       mockgoose.reset();
+      user = await new User(theUserPayload).save();
+      token = await user.generateAuthToken();
       payload = { ...theProfilePayload };
     });
 
     const exec = () => supertest(server)
       .post('/api/profiles')
-      .send(payload);
+      .send(payload)
+      .set('Authorization', `bearer ${token}`);
 
 
     it('should register', async () => {
@@ -83,19 +87,11 @@ describe('Profiles Test Suite', function () {
       }).save();
 
       const newProfilePayload = {
-        user: new mongoose.Types.ObjectId(),
+        ...theProfilePayload,
         handle: 'theHandle2',
-        location: {
-          name: 'place name 2',
-          location: {
-            type: 'Point',
-            coordinates: [-100, 30],
-          },
-        },
-        bio: 'theBio2',
       };
 
-      await new Profile(newProfilePayload).save();
+      await new Profile({ ...newProfilePayload, user: new mongoose.Types.ObjectId() }).save();
     });
 
     beforeEach(async () => {
@@ -104,7 +100,7 @@ describe('Profiles Test Suite', function () {
     });
 
     const getProfileByHandle = () => supertest(server)
-      .get(`/api/profiles/${handle}`);
+      .get(`/api/profiles/handle/${handle}`);
 
     const getCurrentProfile = () => supertest(server)
       .get('/api/profiles/current')

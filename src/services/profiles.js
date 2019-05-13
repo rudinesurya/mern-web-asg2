@@ -44,15 +44,20 @@ module.exports.getDocByHandle = function (handle) {
   });
 };
 
-module.exports.create = function (data) {
+module.exports.create = function (id, data) {
   return new Promise(async (resolve, reject) => {
     const errors = validateRegisteration(data);
     if (!_.isEmpty(errors)) {
       return reject(Boom.badData('Bad data', errors));
     }
 
+    const newProfile = {
+      user: id,
+      ...data,
+    };
+
     try {
-      const result = await new Profile(data).save();
+      const result = await new Profile(newProfile).save();
       resolve({ result });
     } catch (err) {
       reject(Boom.boomify(err));

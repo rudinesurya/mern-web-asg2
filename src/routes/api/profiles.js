@@ -17,8 +17,8 @@ router.get('/', async (req, res) => {
  * @desc    Create a new user profile
  * @access: admin
  */
-router.post('/', async (req, res) => {
-  const { result } = await profiles.create(req.body);
+router.post('/', passport, async (req, res) => {
+  const { result } = await profiles.create(req.user._id, req.body);
   res.status(201).json(result);
 });
 
@@ -33,11 +33,21 @@ router.get('/current', passport, async (req, res) => {
 });
 
 /**
- * @route   GET api/profiles/:handle
+ * @route   GET api/profiles/:userId
+ * @desc    Get user profile by userId if it exists
+ * @access: public
+ */
+router.get('/:userId', async (req, res) => {
+  const { doc } = await profiles.getDocByUserId(req.params.userId);
+  res.json(doc);
+});
+
+/**
+ * @route   GET api/profiles/handle/:handle
  * @desc    Get user profile by handle if it exists
  * @access: public
  */
-router.get('/:handle', async (req, res) => {
+router.get('/handle/:handle', async (req, res) => {
   const { doc } = await profiles.getDocByHandle(req.params.handle);
   res.json(doc);
 });

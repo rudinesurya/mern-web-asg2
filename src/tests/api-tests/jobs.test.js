@@ -17,8 +17,8 @@ describe('Jobs Test Suite', function () {
   };
 
   const theJobPayload = {
-    host: new mongoose.Types.ObjectId(),
     title: 'the title',
+    payout: 500,
     venue: {
       name: 'place name',
       location: {
@@ -83,7 +83,7 @@ describe('Jobs Test Suite', function () {
       mockgoose.reset();
       user = await new User(theUserPayload).save();
       job = await new Job({ ...theJobPayload, host: user._id }).save();
-      await new Job({ ...theJobPayload, title: 'xxx' }).save();
+      await new Job({ ...theJobPayload, title: 'xxx', host: user._id }).save();
     });
 
     beforeEach(async () => {
@@ -212,6 +212,124 @@ describe('Jobs Test Suite', function () {
       jobId = 'invalid';
       const res = await exec();
       res.status.should.equal(500);
+    });
+  });
+
+  describe('Sorting', () => {
+    let user;
+    let token;
+    let sortBy;
+    let hostId = {};
+    let limit;
+
+    before(async () => {
+      mockgoose.reset();
+      user = await new User(theUserPayload).save();
+      token = await user.generateAuthToken();
+
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date('2017-02-17T04:00:00'),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date('2019-03-17T01:00:00'),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date('2018-02-17T02:00:00'),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date('2019-03-17T05:00:00'),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date('2018-01-17T03:00:00'),
+      }).save();
+    });
+
+    beforeEach(async () => {
+      sortBy = 'date';
+      hostId = user._id.toString();
+      limit = 0;
+    });
+
+    const exec = () => supertest(server)
+      .get('/api/jobs')
+      .query({
+        sortBy,
+        hostId,
+        limit,
+      });
+
+
+    it('should be in ascending date', async () => {
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body;
+      jobs.length.should.be.equal(5);
+
+      let sorted = true;
+      for (let i = 0; i < jobs.length - 1; ++i) {
+        if (jobs[i].date > jobs[i + 1].date) {
+          sorted = false;
+          break;
+        }
+      }
+
+      sorted.should.be.true();
+    });
+
+    it('should be in descending date', async () => {
+      sortBy = '-date';
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body;
+      jobs.length.should.be.equal(5);
+
+      let sorted = true;
+      for (let i = 0; i < jobs.length - 1; ++i) {
+        if (jobs[i].date < jobs[i + 1].date) {
+          sorted = false;
+          break;
+        }
+      }
+
+      sorted.should.be.true();
+    });
+
+    it('should return 5 jobs', async () => {
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body;
+      jobs.length.should.be.equal(5);
+    });
+
+    it('should return 0 jobs', async () => {
+      hostId = new mongoose.Types.ObjectId().toString();
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body;
+      jobs.length.should.be.equal(0);
+    });
+
+    it('should limit to 2 jobs only', async () => {
+      limit = 2;
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body;
+      jobs.length.should.be.equal(2);
     });
   });
 });

@@ -7,10 +7,15 @@ const validateRegisteration = require('./validations/jobRegisteration');
 const validateUpdate = require('./validations/jobUpdate');
 const validatePostComment = require('./validations/commentPost');
 
-module.exports.getAllDocs = function () {
+module.exports.getAllDocs = function (match, sort, limit, skip) {
   return new Promise(async (resolve, reject) => {
     try {
-      const docs = await Job.find();
+      const docs = await Job.find(match)
+        .limit(limit)
+        .skip(skip)
+        .sort(sort)
+        .populate('host', ['name', 'email', 'avatarUrl']);
+
       resolve({ docs });
     } catch (err) {
       reject(Boom.boomify(err));
@@ -21,19 +26,10 @@ module.exports.getAllDocs = function () {
 module.exports.getDocById = function (id) {
   return new Promise(async (resolve, reject) => {
     try {
-      const doc = await Job.findById(id);
-      if (!doc) return reject(Boom.notFound('Job not found'));
-      resolve({ doc });
-    } catch (err) {
-      reject(Boom.boomify(err));
-    }
-  });
-};
-
-module.exports.getDocByHandle = function (handle) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const doc = await Job.findOne({ handle });
+      const doc = await Job.findById(id)
+        .populate('host', ['name', 'email', 'avatarUrl'])
+        .populate('participants.user', ['name', 'avatarUrl'])
+        .populate('comments.user', ['name', 'avatarUrl']);
       if (!doc) return reject(Boom.notFound('Job not found'));
       resolve({ doc });
     } catch (err) {
@@ -44,16 +40,15 @@ module.exports.getDocByHandle = function (handle) {
 
 module.exports.create = function (id, data) {
   return new Promise(async (resolve, reject) => {
-    const newJob = {
-      host: id,
-      title: data.title,
-      venue: data.venue,
-      date: data.date,
-    };
-    const errors = validateRegisteration(newJob);
+    const errors = validateRegisteration(data);
     if (!_.isEmpty(errors)) {
       return reject(Boom.badData('Bad data', errors));
     }
+
+    const newJob = {
+      host: id,
+      ...data,
+    };
 
     try {
       const result = await new Job(newJob).save();
@@ -155,15 +150,15 @@ module.exports.leave = function (userId, jobId) {
 
 module.exports.postComment = function (userId, jobId, data) {
   return new Promise(async (resolve, reject) => {
+    const errors = validatePostComment(data);
+    if (!_.isEmpty(errors)) {
+      return reject(Boom.badData('Bad data', errors));
+    }
+
     const newComment = {
       user: userId.toString(),
       text: data.text,
     };
-
-    const errors = validatePostComment(newComment);
-    if (!_.isEmpty(errors)) {
-      return reject(Boom.badData('Bad data', errors));
-    }
 
     try {
       const job = await Job.findById(jobId);

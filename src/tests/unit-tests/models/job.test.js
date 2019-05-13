@@ -7,6 +7,7 @@ describe('Job Model Unit Tests', () => {
   const theJobPayload = {
     host: id,
     title: 'some job',
+    payout: 400,
     venue: {
       name: 'place name',
       location: {
