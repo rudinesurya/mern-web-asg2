@@ -14,7 +14,7 @@ module.exports = (input) => {
     payout: Joi.number().required(),
     venue: locationSchema.required(),
     date: Joi.date().required(),
-    description: Joi.string().min(3),
+    description: Joi.string().min(3).required(),
     urgency: Joi.boolean(),
   };
 
