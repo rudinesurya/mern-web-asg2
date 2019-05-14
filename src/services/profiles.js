@@ -11,7 +11,7 @@ module.exports.getAllDocs = function () {
     try {
       const docs = await Profile.find()
         .populate('user', ['name', 'email', 'avatarUrl']);
-      resolve({ docs });
+      resolve(docs);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -24,7 +24,7 @@ module.exports.getDocByUserId = function (userId) {
       const doc = await Profile.findOne({ user: userId })
         .populate('user', ['name', 'email', 'avatarUrl']);
       if (!doc) return reject(Boom.notFound('Profile not found'));
-      resolve({ doc });
+      resolve(doc);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -37,7 +37,7 @@ module.exports.getDocByHandle = function (handle) {
       const doc = await Profile.findOne({ handle })
         .populate('user', ['name', 'email', 'avatarUrl']);
       if (!doc) return reject(Boom.notFound('Profile not found'));
-      resolve({ doc });
+      resolve(doc);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -58,7 +58,7 @@ module.exports.create = function (id, data) {
 
     try {
       const result = await new Profile(newProfile).save();
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -67,7 +67,6 @@ module.exports.create = function (id, data) {
 
 module.exports.updateDocByUserId = function (id, data) {
   return new Promise(async (resolve, reject) => {
-    console.log(data);
     const errors = validateUpdate(data);
     if (!_.isEmpty(errors)) {
       return reject(Boom.badData('Bad data', errors));
@@ -75,7 +74,7 @@ module.exports.updateDocByUserId = function (id, data) {
 
     try {
       const result = await Profile.findOneAndUpdate({ user: id }, { $set: data }, { new: true });
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }

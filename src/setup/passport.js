@@ -6,7 +6,7 @@ const User = require('../models/User').Model;
 const { ExtractJwt, Strategy } = passportJWT;
 
 const secret = config.get('jwt_secret');
-console.log(`jwt_secret is ${secret}`);
+// console.log(`jwt_secret is ${secret}`);
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = secret;

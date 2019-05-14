@@ -8,7 +8,7 @@ const profiles = require('../../services/profiles');
  * @access: public
  */
 router.get('/', async (req, res) => {
-  const { docs } = await profiles.getAllDocs();
+  const docs = await profiles.getAllDocs();
   res.json(docs);
 });
 
@@ -18,7 +18,7 @@ router.get('/', async (req, res) => {
  * @access: admin
  */
 router.post('/', passport, async (req, res) => {
-  const { result } = await profiles.create(req.user._id, req.body);
+  const result = await profiles.create(req.user._id, req.body);
   res.status(201).json(result);
 });
 
@@ -28,7 +28,7 @@ router.post('/', passport, async (req, res) => {
  * @access: private
  */
 router.get('/current', passport, async (req, res) => {
-  const { doc } = await profiles.getDocByUserId(req.user._id);
+  const doc = await profiles.getDocByUserId(req.user._id);
   res.json(doc);
 });
 
@@ -38,7 +38,7 @@ router.get('/current', passport, async (req, res) => {
  * @access: public
  */
 router.get('/:userId', async (req, res) => {
-  const { doc } = await profiles.getDocByUserId(req.params.userId);
+  const doc = await profiles.getDocByUserId(req.params.userId);
   res.json(doc);
 });
 
@@ -48,7 +48,7 @@ router.get('/:userId', async (req, res) => {
  * @access: public
  */
 router.get('/handle/:handle', async (req, res) => {
-  const { doc } = await profiles.getDocByHandle(req.params.handle);
+  const doc = await profiles.getDocByHandle(req.params.handle);
   res.json(doc);
 });
 
@@ -58,7 +58,7 @@ router.get('/handle/:handle', async (req, res) => {
  * @access: private
  */
 router.post('/current', passport, async (req, res) => {
-  const { result } = await profiles.updateDocByUserId(req.user._id, req.body);
+  const result = await profiles.updateDocByUserId(req.user._id, req.body);
   res.json(result);
 });
 

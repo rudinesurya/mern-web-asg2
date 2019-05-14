@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
   } = await auth.registerUser(req.body);
   // Create a user profile if a new user logged in
   await auth.createProfileIfNew(user);
-  res.status(201).json({ user, token });
+  res.status(201).json(token);
 });
 
 /**
@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
   } = await auth.loginUser(req.body);
   // Create a user profile if a new user logged in
   await auth.createProfileIfNew(user);
-  res.json({ token });
+  res.json(token);
 });
 
 /**
@@ -47,7 +47,7 @@ router.get('/current', passport, async (req, res) => {
  * @access: private
  */
 router.delete('/current', passport, async (req, res) => {
-  const { result } = await users.deleteById(req.user._id);
+  const result = await users.deleteById(req.user._id);
   res.json(result);
 });
 
@@ -59,7 +59,7 @@ module.exports = router;
  * @access: private, admin only
  */
 router.delete('/:id', [passport, admin], async (req, res) => {
-  const { result } = await users.deleteById(req.params.id);
+  const result = await users.deleteById(req.params.id);
   res.json(result);
 });
 

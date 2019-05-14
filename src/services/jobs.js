@@ -16,7 +16,7 @@ module.exports.getAllDocs = function (match, sort, limit, skip) {
         .sort(sort)
         .populate('host', ['name', 'email', 'avatarUrl']);
 
-      resolve({ docs });
+      resolve(docs);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -31,7 +31,7 @@ module.exports.getDocById = function (id) {
         .populate('participants.user', ['name', 'avatarUrl'])
         .populate('comments.user', ['name', 'avatarUrl']);
       if (!doc) return reject(Boom.notFound('Job not found'));
-      resolve({ doc });
+      resolve(doc);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -52,7 +52,7 @@ module.exports.create = function (id, data) {
 
     try {
       const result = await new Job(newJob).save();
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -74,7 +74,7 @@ module.exports.updateDoc = function (userId, jobId, data) {
         return reject(Boom.notFound('Job not found'));
       }
 
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -87,7 +87,7 @@ module.exports.deleteById = function (id) {
       const result = await Job.findOneAndRemove({ _id: id });
       if (!result) return reject(Boom.notFound('Job not found'));
 
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -117,7 +117,7 @@ module.exports.join = function (userId, jobId) {
 
       job.participants.unshift(newParticipant);
       const result = await job.save();
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -147,7 +147,7 @@ module.exports.leave = function (userId, jobId) {
       job.participants.splice(index, 1);
 
       const result = await job.save();
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -172,7 +172,7 @@ module.exports.postComment = function (userId, jobId, data) {
 
       job.comments.unshift(newComment);
       const result = await job.save();
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -198,7 +198,7 @@ module.exports.deleteComment = function (userId, jobId, commentId) {
       job.comments.splice(index, 1);
 
       const result = await job.save();
-      resolve({ result });
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }

@@ -6,7 +6,6 @@ module.exports.DBConnectMongoose = function () {
     mongoose.Promise = global.Promise;
 
     const mongoUri = config.get('mongo_uri');
-    console.log(`mongoUri is ${mongoUri}`);
 
     try {
       // database connect
@@ -15,7 +14,7 @@ module.exports.DBConnectMongoose = function () {
         useNewUrlParser: true,
         useFindAndModify: false,
       });
-      console.log('mongo connection created');
+      console.log(`mongo connection created on ${mongoUri}`);
       resolve(conn);
     } catch (err) {
       console.log(`error creating db connection: ${err}`);

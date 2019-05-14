@@ -17,9 +17,7 @@ module.exports.registerUser = function (data) {
       return reject(Boom.badData('Bad data', errors));
     }
 
-    const {
-      name, email, password, isAdmin,
-    } = data;
+    const { email } = data;
     const avatarUrl = gravatar.url(email, {
       s: '200',
       r: 'pg',
@@ -34,7 +32,7 @@ module.exports.registerUser = function (data) {
     try {
       const user = await newUser.save();
       const token = await user.generateAuthToken();
-      resolve({ user, token });
+      resolve({ token, user });
     } catch (err) {
       if (err.code === 11000) return reject(Boom.conflict('User already exists'));
       reject(Boom.boomify(err));
@@ -50,7 +48,7 @@ module.exports.loginUser = function (data) {
     }
 
     try {
-      const { doc: user } = await users.getDocByEmail(data.email);
+      const user = await users.getDocByEmail(data.email);
       if (!user) return reject(Boom.notFound('User not found'));
 
       const isMatch = await user.comparePassword(data.password);

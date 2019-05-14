@@ -2,6 +2,7 @@ const supertest = require('supertest');
 const should = require('should');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
+const jwt_decode = require('jwt-decode');
 
 describe('Authentication Test Suite', function () {
   let server;
@@ -39,10 +40,10 @@ describe('Authentication Test Suite', function () {
       const res = await exec();
 
       res.status.should.equal(201);
-      res.body.should.have.property('user');
-      const { user } = res.body;
-      user.name.should.equal(theUserPayload.name);
-      user.email.should.equal(theUserPayload.email);
+      const token = res.body;
+      const decoded = jwt_decode(token);
+      decoded.name.should.equal(theUserPayload.name);
+      decoded.email.should.equal(theUserPayload.email);
     });
 
     it('should return 422. missing required variables', async () => {

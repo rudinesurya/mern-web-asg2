@@ -38,17 +38,17 @@ describe('Users Service Unit Tests', () => {
   });
 
   it('should return user by email', async () => {
-    const { doc } = await users.getDocByEmail('test@test.com');
+    const doc = await users.getDocByEmail('test@test.com');
     doc.should.match(theUser);
   });
 
   it('should return null. not found', async () => {
-    const { doc } = await users.getDocByEmail('');
+    const doc = await users.getDocByEmail('');
     should.not.exist(doc);
   });
 
   it('should delete', async () => {
-    const { doc } = await users.deleteById('123456');
+    const doc = await users.deleteById('123456');
     findOneAndRemoveStubbed.called.should.be.true();
   });
 });

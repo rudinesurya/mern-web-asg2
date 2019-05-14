@@ -19,7 +19,7 @@ router.get('/', async (req, res) => {
     match.host = hostId;
   }
 
-  const { docs } = await jobs.getAllDocs(match, sortBy, Number(limit), Number(skip));
+  const docs = await jobs.getAllDocs(match, sortBy, Number(limit), Number(skip));
   res.json(docs);
 });
 
@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
  * @access: public
  */
 router.get('/:jobId', async (req, res) => {
-  const { doc } = await jobs.getDocById(req.params.jobId);
+  const doc = await jobs.getDocById(req.params.jobId);
   res.json(doc);
 });
 
@@ -39,7 +39,7 @@ router.get('/:jobId', async (req, res) => {
  * @access: private
  */
 router.post('/', passport, async (req, res) => {
-  const { result } = await jobs.create(req.user._id, req.body);
+  const result = await jobs.create(req.user._id, req.body);
   res.status(201).json(result);
 });
 
@@ -49,7 +49,7 @@ router.post('/', passport, async (req, res) => {
  * @access: private
  */
 router.patch('/:jobId', passport, async (req, res) => {
-  const { result } = await jobs.updateDoc(req.user._id,
+  const result = await jobs.updateDoc(req.user._id,
     req.params.jobId,
     req.body);
   res.json(result);
@@ -61,7 +61,7 @@ router.patch('/:jobId', passport, async (req, res) => {
  * @access: private
  */
 router.delete('/:jobId', passport, async (req, res) => {
-  const { result } = await jobs.deleteById(req.params.jobId);
+  const result = await jobs.deleteById(req.params.jobId);
   res.json(result);
 });
 
@@ -71,7 +71,7 @@ router.delete('/:jobId', passport, async (req, res) => {
  * @access: private
  */
 router.post('/join/:jobId', passport, async (req, res) => {
-  const { result } = await jobs.join(req.user._id, req.params.jobId);
+  const result = await jobs.join(req.user._id, req.params.jobId);
   res.json(result);
 });
 
@@ -81,7 +81,7 @@ router.post('/join/:jobId', passport, async (req, res) => {
  * @access: private
  */
 router.post('/leave/:jobId', passport, async (req, res) => {
-  const { result } = await jobs.leave(req.user._id, req.params.jobId);
+  const result = await jobs.leave(req.user._id, req.params.jobId);
   res.json(result);
 });
 
@@ -91,7 +91,7 @@ router.post('/leave/:jobId', passport, async (req, res) => {
  * @access: private
  */
 router.post('/comment/:jobId', passport, async (req, res) => {
-  const { result } = await jobs.postComment(req.user._id,
+  const result = await jobs.postComment(req.user._id,
     req.params.jobId,
     req.body);
   res.json(result);
@@ -103,7 +103,7 @@ router.post('/comment/:jobId', passport, async (req, res) => {
  * @access: private
  */
 router.delete('/comment/:jobId/:commentId', passport, async (req, res) => {
-  const { result } = await jobs.deleteComment(req.user._id,
+  const result = await jobs.deleteComment(req.user._id,
     req.params.jobId,
     req.params.commentId);
   res.json(result);

@@ -21,7 +21,7 @@ module.exports.initialize = () => new Promise(async (resolve, reject) => {
         .then(() => {
           const port = process.env.PORT || config.get('port') || 3000;
           server = app.listen(port); // Start the server
-          console.log(`Server listening on port ${port}`);
+          // console.log(`Server listening on port ${port}`);
           resolve(server);
         })
         .catch(err => reject(err));
