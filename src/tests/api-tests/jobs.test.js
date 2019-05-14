@@ -27,6 +27,7 @@ describe('Jobs Test Suite', function () {
       },
     },
     date: new Date(),
+    description: 'sample job description',
   };
 
   before(async () => {
