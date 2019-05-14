@@ -67,6 +67,7 @@ module.exports.create = function (id, data) {
 
 module.exports.updateDocByUserId = function (id, data) {
   return new Promise(async (resolve, reject) => {
+    console.log(data);
     const errors = validateUpdate(data);
     if (!_.isEmpty(errors)) {
       return reject(Boom.badData('Bad data', errors));

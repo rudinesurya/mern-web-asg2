@@ -104,13 +104,18 @@ module.exports.join = function (userId, jobId) {
       if (job.host.toString() === userId) {
         return reject(Boom.badRequest('Host not allowed to join'));
       }
+
       // Should not join more than once
       if (job.participants.filter(p => p.user.toString() === userId).length > 0) {
         return reject(Boom.badRequest('You are already enlisted'));
       }
 
       // Add the user
-      job.participants.unshift({ user: userId });
+      const newParticipant = {
+        user: userId.toString(),
+      };
+
+      job.participants.unshift(newParticipant);
       const result = await job.save();
       resolve({ result });
     } catch (err) {
@@ -129,6 +134,7 @@ module.exports.leave = function (userId, jobId) {
       if (job.host.toString() === userId) {
         return reject(Boom.badRequest('Host not allowed to leave'));
       }
+
       // Should not leave an un-joined job
       if (job.participants.filter(p => p.user.toString() === userId).length === 0) {
         return reject(Boom.badRequest('You are not enlisted'));

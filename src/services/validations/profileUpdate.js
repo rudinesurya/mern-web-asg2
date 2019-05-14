@@ -12,7 +12,7 @@ module.exports = (input) => {
   const schema = {
     handle: Joi.string().min(3).max(50),
     location: locationSchema,
-    bio: Joi.string().min(3).max(50),
+    bio: Joi.string().min(3),
     lastLogin: Joi.date(),
   };
 
