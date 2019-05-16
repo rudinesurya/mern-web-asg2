@@ -196,10 +196,16 @@ await Job.find(match)
 ```
 
 ### Data Model Design
-<img src="readme_img/data_model_relationship.png" width="400">
-<img src="readme_img/user_model.png" width="400">
-<img src="readme_img/profile_model.png" width="400">
-<img src="readme_img/job_model.png" width="400">
+<img src="readme_img/data_model_relationship.png" width="250">
+
+User
+<img src="readme_img/user_model.png">
+
+Profile
+<img src="readme_img/profile_model.png">
+
+Job
+<img src="readme_img/job_model.png">
     
 # Features
 ### Clean Architecture Adopted
@@ -309,7 +315,7 @@ enables state of the art code quality and consistent style throughout the projec
 # Optimizations
     
 # Testings  
-90%+ [test coverage report](/coverage/index.html)
+90%+ [test coverage report](coverage/index.html)
 
 ### Unit Tests
 Model Tests : Validations of input.
