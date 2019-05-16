@@ -225,7 +225,35 @@ router.post('/comment/:jobId', passport, async (req, res) => {
   res.json(result);
 });
 ```
-+ easier to mock test the business logic without the (res,req)
++ clean and well separated business logic code
++ easier to mock test the business logic without the (req, res)
+```$xslt
+module.exports.postComment = function (userId, jobId, data) {
+  return new Promise(async (resolve, reject) => {
+    const errors = validatePostComment(data);
+    if (!_.isEmpty(errors)) {
+      return reject(Boom.badData('Bad data', errors));
+    }
+
+    const newComment = {
+      user: userId.toString(),
+      text: data.text,
+    };
+
+    try {
+      const job = await Job.findById(jobId);
+      if (!job) return reject(Boom.notFound('Job not found'));
+
+      job.comments.unshift(newComment);
+      const result = await job.save();
+      resolve(result);
+    } catch (err) {
+      reject(Boom.boomify(err));
+    }
+  });
+};
+```
+
 
 ### Validations
 Besides having mongoose to validate our data before db operations, 
