@@ -315,7 +315,9 @@ enables state of the art code quality and consistent style throughout the projec
 # Optimizations
     
 # Testings  
-90%+ [test coverage report](coverage/index.html)
+90%+ test coverage report
+
+<img src="readme_img/coverage_result.png">
 
 ### Unit Tests
 Model Tests : Validations of input.
