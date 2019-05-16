@@ -198,13 +198,13 @@ await Job.find(match)
 ### Data Model Design
 <img src="readme_img/data_model_relationship.png" width="250">
 
-User
+#### User
 <img src="readme_img/user_model.png">
 
-Profile
+#### Profile
 <img src="readme_img/profile_model.png">
 
-Job
+#### Job
 <img src="readme_img/job_model.png">
     
 # Features
