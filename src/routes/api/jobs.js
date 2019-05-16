@@ -44,7 +44,7 @@ router.post('/', passport, async (req, res) => {
 });
 
 /**
- * @route   PUT api/jobs/:jobId
+ * @route   PATCH api/jobs/:jobId
  * @desc    Update an existing job
  * @access: private
  */
