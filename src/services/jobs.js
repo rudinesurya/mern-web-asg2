@@ -7,16 +7,17 @@ const validateRegisteration = require('./validations/jobRegisteration');
 const validateUpdate = require('./validations/jobUpdate');
 const validatePostComment = require('./validations/commentPost');
 
-module.exports.getAllDocs = function (match, sort, limit, skip) {
+module.exports.getAllDocs = function (match, sort, page, limit) {
   return new Promise(async (resolve, reject) => {
     try {
-      const docs = await Job.find(match)
-        .limit(limit)
-        .skip(skip)
-        .sort(sort)
-        .populate('host', ['name', 'email', 'avatarUrl']);
-
-      resolve(docs);
+      const options = {
+        sort,
+        populate: { path: 'host', select: 'name avatarUrl' },
+        page,
+        limit,
+      };
+      const result = await Job.paginate(match, options);
+      resolve(result);
     } catch (err) {
       reject(Boom.boomify(err));
     }

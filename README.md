@@ -294,7 +294,8 @@ If the input is valid, then the error will be null, otherwise it will be an Erro
 
 
 ### Error Handling
-Adhering to the best practices, we use appropriate http status codes for errors.
+Adhering to the best practices, we gracefully handle errors, without crashing the server,  
+and use appropriate http status codes and error messages.
 
 status code | message | description
 --- | --- | ---
@@ -317,7 +318,7 @@ enables state of the art code quality and consistent style throughout the projec
 # Testings  
 90%+ test coverage report
 
-<img src="readme_img/coverage_result.png">
+<img src="readme_img/coverage_report.png">
 
 ### Unit Tests
 Model Tests : Validations of input.

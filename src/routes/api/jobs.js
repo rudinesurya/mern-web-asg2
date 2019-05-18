@@ -10,16 +10,15 @@ const jobs = require('../../services/jobs');
  */
 router.get('/', async (req, res) => {
   const {
-    hostId, sortBy, limit, skip,
+    query, sortBy, page, limit,
   } = req.query;
 
-  const match = {};
-
-  if (hostId) {
-    match.host = hostId;
+  let queryObj = {};
+  if (query) {
+    queryObj = JSON.parse(query);
   }
 
-  const docs = await jobs.getAllDocs(match, sortBy, Number(limit), Number(skip));
+  const docs = await jobs.getAllDocs(queryObj, sortBy, Number(page), Number(limit));
   res.json(docs);
 });
 

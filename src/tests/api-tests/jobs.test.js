@@ -102,7 +102,7 @@ describe('Jobs Test Suite', function () {
         .get('/api/jobs');
 
       res.status.should.equal(200);
-      res.body.length.should.equal(2);
+      res.body.total.should.equal(2);
     });
 
     it('should return job by id', async () => {
@@ -220,7 +220,8 @@ describe('Jobs Test Suite', function () {
     let user;
     let token;
     let sortBy;
-    let hostId = {};
+    let query = {};
+    let page;
     let limit;
 
     before(async () => {
@@ -256,16 +257,20 @@ describe('Jobs Test Suite', function () {
     });
 
     beforeEach(async () => {
+      query = JSON.stringify({
+        host: user._id.toString(),
+      });
       sortBy = 'date';
-      hostId = user._id.toString();
-      limit = 0;
+      page = 1;
+      limit = 100;
     });
 
     const exec = () => supertest(server)
       .get('/api/jobs')
       .query({
+        query,
         sortBy,
-        hostId,
+        page,
         limit,
       });
 
@@ -274,7 +279,7 @@ describe('Jobs Test Suite', function () {
       const res = await exec();
       res.status.should.equal(200);
 
-      const jobs = res.body;
+      const jobs = res.body.docs;
       jobs.length.should.be.equal(5);
 
       let sorted = true;
@@ -293,7 +298,7 @@ describe('Jobs Test Suite', function () {
       const res = await exec();
       res.status.should.equal(200);
 
-      const jobs = res.body;
+      const jobs = res.body.docs;
       jobs.length.should.be.equal(5);
 
       let sorted = true;
@@ -311,16 +316,18 @@ describe('Jobs Test Suite', function () {
       const res = await exec();
       res.status.should.equal(200);
 
-      const jobs = res.body;
+      const jobs = res.body.docs;
       jobs.length.should.be.equal(5);
     });
 
     it('should return 0 jobs', async () => {
-      hostId = new mongoose.Types.ObjectId().toString();
+      query = JSON.stringify({
+        host: new mongoose.Types.ObjectId().toString(),
+      });
       const res = await exec();
       res.status.should.equal(200);
 
-      const jobs = res.body;
+      const jobs = res.body.docs;
       jobs.length.should.be.equal(0);
     });
 
@@ -329,7 +336,7 @@ describe('Jobs Test Suite', function () {
       const res = await exec();
       res.status.should.equal(200);
 
-      const jobs = res.body;
+      const jobs = res.body.docs;
       jobs.length.should.be.equal(2);
     });
   });

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const mongoosePaginate = require('mongoose-paginate');
 const CommentSchema = require('./Comment').Schema;
 const LocationSchema = require('./Location').Schema;
 const ParticipantSchema = require('./Participant').Schema;
@@ -48,4 +49,5 @@ const JobSchema = new mongoose.Schema({
   },
 });
 
+JobSchema.plugin(mongoosePaginate);
 module.exports.Model = mongoose.model('jobs', JobSchema);
