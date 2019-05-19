@@ -216,11 +216,186 @@ describe('Jobs Test Suite', function () {
     });
   });
 
+  describe('Pagination', () => {
+    let user;
+    let token;
+    let page;
+    let limit;
+
+    before(async () => {
+      mockgoose.reset();
+      user = await new User(theUserPayload).save();
+      token = await user.generateAuthToken();
+
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        date: new Date(),
+      }).save();
+    });
+
+    beforeEach(async () => {
+      page = 1;
+      limit = 100;
+    });
+
+    const exec = () => supertest(server)
+      .get('/api/jobs')
+      .query({
+        page,
+        limit,
+      });
+
+    it('should limit to 2 jobs only', async () => {
+      limit = 2;
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body.docs;
+      jobs.length.should.be.equal(2);
+    });
+
+    it('should return the last job only', async () => {
+      page = 3;
+      limit = 2;
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body.docs;
+      jobs.length.should.be.equal(1);
+    });
+  });
+
+  describe('Querying', () => {
+    let user;
+    let token;
+    let query = {};
+    let page;
+    let limit;
+
+    before(async () => {
+      mockgoose.reset();
+      user = await new User(theUserPayload).save();
+      token = await user.generateAuthToken();
+
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        payout: 1,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        payout: 1,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        payout: 2,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        payout: 2,
+        date: new Date(),
+      }).save();
+      await new Job({
+        ...theJobPayload,
+        host: user._id,
+        payout: 2,
+        date: new Date(),
+      }).save();
+    });
+
+    beforeEach(async () => {
+      query = JSON.stringify({
+        host: user._id.toString(),
+      });
+      page = 1;
+      limit = 100;
+    });
+
+    const exec = () => supertest(server)
+      .get('/api/jobs')
+      .query({
+        query,
+        page,
+        limit,
+      });
+
+    it('should return 5 jobs', async () => {
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body.docs;
+      jobs.length.should.be.equal(5);
+    });
+
+    it('should return 0 jobs', async () => {
+      query = JSON.stringify({
+        host: new mongoose.Types.ObjectId().toString(),
+      });
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body.docs;
+      jobs.length.should.be.equal(0);
+    });
+
+    it('should return 2 jobs with matching query', async () => {
+      query = JSON.stringify({
+        host: user._id.toString(),
+        payout: 1,
+      });
+      const res = await exec();
+      res.status.should.equal(200);
+
+      const jobs = res.body.docs;
+      jobs.length.should.be.equal(2);
+    });
+
+    it('should return 422, invalid json query', async () => {
+      query = 'bad data';
+      const res = await exec();
+      res.status.should.equal(422);
+    });
+
+    it('should return 500, invalid mongoose id', async () => {
+      query = JSON.stringify({
+        host: 'dqwdqwdasdqwe12',
+      });
+      const res = await exec();
+      res.status.should.equal(500);
+    });
+  });
+
   describe('Sorting', () => {
     let user;
     let token;
     let sortBy;
-    let query = {};
     let page;
     let limit;
 
@@ -257,10 +432,9 @@ describe('Jobs Test Suite', function () {
     });
 
     beforeEach(async () => {
-      query = JSON.stringify({
-        host: user._id.toString(),
+      sortBy = JSON.stringify({
+        date: -1,
       });
-      sortBy = 'date';
       page = 1;
       limit = 100;
     });
@@ -268,7 +442,6 @@ describe('Jobs Test Suite', function () {
     const exec = () => supertest(server)
       .get('/api/jobs')
       .query({
-        query,
         sortBy,
         page,
         limit,
@@ -276,6 +449,9 @@ describe('Jobs Test Suite', function () {
 
 
     it('should be in ascending date', async () => {
+      sortBy = JSON.stringify({
+        date: 1,
+      });
       const res = await exec();
       res.status.should.equal(200);
 
@@ -294,7 +470,9 @@ describe('Jobs Test Suite', function () {
     });
 
     it('should be in descending date', async () => {
-      sortBy = '-date';
+      sortBy = JSON.stringify({
+        date: -1,
+      });
       const res = await exec();
       res.status.should.equal(200);
 
@@ -310,34 +488,6 @@ describe('Jobs Test Suite', function () {
       }
 
       sorted.should.be.true();
-    });
-
-    it('should return 5 jobs', async () => {
-      const res = await exec();
-      res.status.should.equal(200);
-
-      const jobs = res.body.docs;
-      jobs.length.should.be.equal(5);
-    });
-
-    it('should return 0 jobs', async () => {
-      query = JSON.stringify({
-        host: new mongoose.Types.ObjectId().toString(),
-      });
-      const res = await exec();
-      res.status.should.equal(200);
-
-      const jobs = res.body.docs;
-      jobs.length.should.be.equal(0);
-    });
-
-    it('should limit to 2 jobs only', async () => {
-      limit = 2;
-      const res = await exec();
-      res.status.should.equal(200);
-
-      const jobs = res.body.docs;
-      jobs.length.should.be.equal(2);
     });
   });
 });

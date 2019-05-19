@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const Boom = require('@hapi/boom');
 const passport = require('../../middlewares/passport');
 const jobs = require('../../services/jobs');
 
@@ -14,11 +15,20 @@ router.get('/', async (req, res) => {
   } = req.query;
 
   let queryObj = {};
-  if (query) {
-    queryObj = JSON.parse(query);
+  let sortByObj = {};
+
+  try {
+    if (query) {
+      queryObj = JSON.parse(query);
+    }
+    if (sortBy) {
+      sortByObj = JSON.parse(sortBy);
+    }
+  } catch (err) {
+    throw Boom.badData(err);
   }
 
-  const docs = await jobs.getAllDocs(queryObj, sortBy, Number(page), Number(limit));
+  const docs = await jobs.getAllDocs(queryObj, sortByObj, Number(page), Number(limit));
   res.json(docs);
 });
 

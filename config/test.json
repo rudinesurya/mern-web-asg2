@@ -1,5 +1,9 @@
 {
   "jwt_secret": "Change Me",
   "mongo_uri": "mongodb://localhost/27017",
-  "port": "4000"
+  "port": "4000",
+  "pusher_appId": "785226",
+  "pusher_key": "9537d7da775751df9b42",
+  "pusher_secret": "bb1756bc5a38531e747a",
+  "pusher_cluster": "eu"
 }

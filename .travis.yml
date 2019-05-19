@@ -10,3 +10,10 @@ notifications:
     on_failure: always
 script:
   - npm run coverage
+deploy:
+  provider: heroku
+  api_key:
+    secure: eb85a7c8-bc5d-4445-973d-af6d77207f85
+  app: ess-ewd-nodeserver
+  on:
+    repo: rudinesurya/mern-web-asg2

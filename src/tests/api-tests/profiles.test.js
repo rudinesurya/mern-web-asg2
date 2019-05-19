@@ -74,6 +74,7 @@ describe('Profiles Test Suite', function () {
 
   describe('Getting', () => {
     let user;
+    let userId;
     let handle;
     let token;
 
@@ -95,9 +96,13 @@ describe('Profiles Test Suite', function () {
     });
 
     beforeEach(async () => {
+      userId = user._id;
       handle = theProfilePayload.handle;
       token = await user.generateAuthToken();
     });
+
+    const getProfileByUserId = () => supertest(server)
+      .get(`/api/profiles/${userId}`);
 
     const getProfileByHandle = () => supertest(server)
       .get(`/api/profiles/handle/${handle}`);
@@ -113,6 +118,11 @@ describe('Profiles Test Suite', function () {
 
       res.status.should.equal(200);
       res.body.length.should.equal(2);
+    });
+
+    it('should return profile by userId', async () => {
+      const res = await getProfileByUserId();
+      res.status.should.equal(200);
     });
 
     it('should return profile by handle', async () => {

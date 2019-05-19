@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom');
 const _ = require('lodash');
+const pusher = require('../setup/pusher');
 const Job = require('../models/Job').Model;
 
 // Validations
@@ -16,6 +17,7 @@ module.exports.getAllDocs = function (match, sort, page, limit) {
         page,
         limit,
       };
+
       const result = await Job.paginate(match, options);
       resolve(result);
     } catch (err) {
@@ -54,6 +56,8 @@ module.exports.create = function (id, data) {
     try {
       const result = await new Job(newJob).save();
       resolve(result);
+
+      pusher.trigger('jobs', 'jobRegistered', {});
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -76,6 +80,8 @@ module.exports.updateDoc = function (userId, jobId, data) {
       }
 
       resolve(result);
+
+      pusher.trigger('jobs', 'jobUpdated', { jobId });
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -89,6 +95,8 @@ module.exports.deleteById = function (id) {
       if (!result) return reject(Boom.notFound('Job not found'));
 
       resolve(result);
+
+      pusher.trigger('jobs', 'jobDeleted', { jobId });
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -119,6 +127,8 @@ module.exports.join = function (userId, jobId) {
       job.participants.unshift(newParticipant);
       const result = await job.save();
       resolve(result);
+
+      pusher.trigger('jobs', 'jobJoined', { jobId });
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -149,6 +159,8 @@ module.exports.leave = function (userId, jobId) {
 
       const result = await job.save();
       resolve(result);
+
+      pusher.trigger('jobs', 'jobLeft', { jobId });
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -174,6 +186,8 @@ module.exports.postComment = function (userId, jobId, data) {
       job.comments.unshift(newComment);
       const result = await job.save();
       resolve(result);
+
+      pusher.trigger('jobs', 'postComment', { jobId });
     } catch (err) {
       reject(Boom.boomify(err));
     }
@@ -200,6 +214,8 @@ module.exports.deleteComment = function (userId, jobId, commentId) {
 
       const result = await job.save();
       resolve(result);
+
+      pusher.trigger('jobs', 'deleteComment', { jobId });
     } catch (err) {
       reject(Boom.boomify(err));
     }
