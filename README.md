@@ -51,6 +51,7 @@ full coverage report: https://www.dropbox.com/sh/ponyqr74tns0ckv/AAAObUh4f6vjVKq
    
 + [Deployment](#Deployment) 
 + [Continuous Integration](#Continuous-Integration)
++ [Analytics](#Analytics)
 
 + [Third Party Components](#Third-party-components)
 
@@ -396,7 +397,12 @@ Service Tests : Test business logic while mocking the mongoose operations.
 <img src="readme_img/unit_tests.png" width="400">
 
 ### Api Tests
-Testing of the endpoints
+Api Testing best practices
++ Test for the typical or expected results first
++ Test for failure and status codes
++ Group similar test cases using Test Suites
++ Limit the tests from as many variables as possible by keeping it as isolated as possible
++ Avoid repeating codes and use before and beforeEach to setup test conditions
 
 <img src="readme_img/api_tests.png" width="400">
 
@@ -405,6 +411,11 @@ The nodejs server is hosted in heroku.
 
 # Continuous Integration
 Travis enables automated testing and redeployment when the src gets pushed to github. Email will also be sent to the specified notification email address when a build failed.
+
+# Analytics
+New Relic is an application performance monitoring (APM) software analytics which deliver real-time and trending data about the web application's performance. It is easy to integrate with node and provides insightful charts which can enable us to visualize network traffic and observe bottlenecks.
+
+<img src="readme_img/analytics.png" width="800">
 
 # Third Party Components 
 library | description
@@ -424,6 +435,7 @@ morgan | HTTP request logger middleware
 passport | Authentication middleware for Node.js.
 winston | Logger
 pusher | library to support observing the pusher channel
+newrelic | analytics tool
 
 dev library | description
 --- | ---
