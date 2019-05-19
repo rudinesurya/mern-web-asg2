@@ -96,7 +96,7 @@ module.exports.deleteById = function (id) {
 
       resolve(result);
 
-      pusher.trigger('jobs', 'jobDeleted', { jobId });
+      pusher.trigger('jobs', 'jobDeleted', { jobId: id });
     } catch (err) {
       reject(Boom.boomify(err));
     }

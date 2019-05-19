@@ -1,8 +1,8 @@
 const supertest = require('supertest');
 const should = require('should');
+const jwtDecode = require('jwt-decode');
 const mockgoose = require('../helper/mockgoose-helper');
 const User = require('../../models/User').Model;
-const jwt_decode = require('jwt-decode');
 
 describe('Authentication Test Suite', function () {
   let server;
@@ -41,7 +41,7 @@ describe('Authentication Test Suite', function () {
 
       res.status.should.equal(201);
       const token = res.body;
-      const decoded = jwt_decode(token);
+      const decoded = jwtDecode(token);
       decoded.name.should.equal(theUserPayload.name);
       decoded.email.should.equal(theUserPayload.email);
     });

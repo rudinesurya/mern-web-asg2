@@ -4,6 +4,9 @@
   ],
   "rules": {
     "no-console": "off",
+    "no-unused-vars": "warn",
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
     "func-names": "off",
     "no-shadow": "off",
     "no-use-before-define": "off",

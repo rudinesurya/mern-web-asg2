@@ -294,7 +294,8 @@ module.exports = (input) => {
 If the input is valid, then the error will be null, otherwise it will be an Error object providing more information.
 
 ### Authentication
-
+When the user successfully logs in using their credentials, a JSON Web Token will be returned. 
+Whenever the user wants to access a protected route or resource, the user agent should send the JWT, typically in the Authorization header using the Bearer schema. For production, since tokens are credentials, they can be set to expire in a few hours to prevent security issues.
 
 ### Error Handling
 Adhering to the best practices, we gracefully handle errors, without crashing the server,  
@@ -401,7 +402,7 @@ Testing of the endpoints
 The nodejs server is hosted in heroku.
 
 # Continuous Integration
-Travis enables automated testing and redeployment when the src gets pushed to github.
+Travis enables automated testing and redeployment when the src gets pushed to github. Email will also be sent to the specified notification email address when a build failed.
 
 # Third Party Components 
 library | description
@@ -420,6 +421,7 @@ mongoose | Object Data Modeling (ODM) library for MongoDB and NodeJS
 morgan | HTTP request logger middleware
 passport | Authentication middleware for Node.js.
 winston | Logger
+pusher | library to support observing the pusher channel
 
 dev library | description
 --- | ---
