@@ -1,6 +1,7 @@
 const express = require('express');
 const config = require('config');
 const cors = require('cors');
+require('newrelic');
 const db = require('./setup/db');
 const setupLogging = require('./setup/logging');
 const setupRouting = require('./setup/routes');

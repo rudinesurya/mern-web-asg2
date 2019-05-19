@@ -6,6 +6,8 @@ server: https://github.com/rudinesurya/mern-web-asg2
 
 client: https://github.com/rudinesurya/ess-ewd-asg2-react
 
+full coverage report: https://www.dropbox.com/sh/ponyqr74tns0ckv/AAAObUh4f6vjVKq0HTCCrEkOa?dl=0
+
 
 ## Table of Contents
 
