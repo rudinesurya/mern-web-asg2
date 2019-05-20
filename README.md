@@ -331,7 +331,15 @@ which allows consistency and cleaner error handling.
 
 ### Error Logging
 Besides returning the error response to the user, we also logged the errors into a log file for bug tracking.
-This was done using winston library.
+This was done using winston library, which enables the code below to log to both console and file.
+
+```js
+const console = new winston.transports.Console({ colorize: true, prettyPrint: true });
+const files = new winston.transports.File({ filename: 'log.log' });
+
+winston.add(console);
+winston.add(files);
+```
 
 ```js
 module.exports = function (err, req, res, next) {
@@ -398,7 +406,7 @@ enables state of the art code quality and consistent style throughout the projec
    
     
 # Testings  
-90%+ test coverage report (75+ tests)
+90%+ test coverage report (75+ test cases)
 
 <img src="readme_img/coverage_report.png">
 
@@ -424,6 +432,30 @@ The nodejs server is hosted in heroku.
 
 # Continuous Integration
 Travis enables automated testing and redeployment when the src gets pushed to github. Email will also be sent to the specified notification email address when a build failed.
+
+```yml
+dist: trusty
+language: node_js
+node_js:
+  - stable
+notifications:
+  email:
+    recipients:
+      - rudinesurya@gmail.com
+    on_success: never
+    on_failure: always
+script:
+  - npm run coverage
+deploy:
+  provider: heroku
+  api_key:
+    secure: eb85a7c8-bc5d-4445-973d-af6d77207f85
+  app: ess-ewd-nodeserver
+  on:
+    repo: rudinesurya/mern-web-asg2
+
+```
+<img src="readme_img/travisci.png" width="800">
 
 # Analytics
 New Relic is an application performance monitoring (APM) software analytics which deliver real-time and trending data about the web application's performance. It is easy to integrate with node and provides insightful charts which can enable us to visualize network traffic and observe bottlenecks.
