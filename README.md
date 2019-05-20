@@ -341,6 +341,8 @@ winston.add(console);
 winston.add(files);
 ```
 
+The error middleware, which will execute at the end of each request, will then log the error and return the error to the user.
+
 ```js
 module.exports = function (err, req, res, next) {
   if (Boom.isBoom(err)){
