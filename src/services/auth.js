@@ -17,6 +17,10 @@ module.exports.registerUser = function (data) {
       return reject(Boom.badData('Bad data', errors));
     }
 
+    if (data.password !== data.password2) {
+      return reject(Boom.badData('Passwords do not match'));
+    }
+
     const { email } = data;
     const avatarUrl = gravatar.url(email, {
       s: '200',

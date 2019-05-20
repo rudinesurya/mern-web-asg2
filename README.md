@@ -53,6 +53,8 @@ full coverage report: https://www.dropbox.com/sh/ponyqr74tns0ckv/AAAObUh4f6vjVKq
 + [Continuous Integration](#Continuous-Integration)
 + [Analytics](#Analytics)
 
++ [Third Party Service Api](#Third-party-service-api)
+
 + [Third Party Components](#Third-party-components)
 
 + [References](#References)
@@ -73,7 +75,18 @@ Make sure the mongodb the app is using is switched on before starting the server
 To specify the mongo_uri, change the config json file.
 
 ### Configuration
-To override the configurations, you should create a new development.json file and place it in the config folder.
+To override the configurations, you should create a new **development.json** file and place it in the config folder.
+```json
+{
+  "jwt_secret": "qweraasdz213",
+  "mongo_uri": "mongodb+srv://bob:bob123@ess-ewd-asg2-dpczs.mongodb.net/test?retryWrites=true",
+  "port": "3002",
+  "pusher_appId": "785226",
+  "pusher_key": "9537d7da775751df9b42",
+  "pusher_secret": "bb1756bc5a38531e747a",
+  "pusher_cluster": "eu"
+}
+```
 The project will use the default.json when no NODE_ENV is specified, otherwise it will use the config file matching it.
 
 ### Scripts
@@ -151,12 +164,12 @@ cors | cors
 # Persistence
 ### MongoDB
 All the data are being served by NoSql database, MongoDB. The db is then hosted in the cloud, by Mongo Atlas,
-which makes it convenient to deploy the server to Heroku later on.
+which makes it convenient to deploy the server to Heroku later on. Sensitive data, like passwords will be encrypted using bcrypt and stored.
 
 ### Mongoose
 Mongoose allows data to be defined using the Schema interface. 
 The Schema allows you to define the fields stored in each document along with their validation requirements and default values.
-The Schema allows nested schema such as the example shown below.
+The Schema allows nested schema such as the example shown below. Together with document referencing, we can create complex models relationships without complexity.
 
 ```js
 const ProfileSchema = new mongoose.Schema({
@@ -385,7 +398,7 @@ enables state of the art code quality and consistent style throughout the projec
    
     
 # Testings  
-90%+ test coverage report
+90%+ test coverage report (75+ tests)
 
 <img src="readme_img/coverage_report.png">
 
@@ -416,6 +429,12 @@ Travis enables automated testing and redeployment when the src gets pushed to gi
 New Relic is an application performance monitoring (APM) software analytics which deliver real-time and trending data about the web application's performance. It is easy to integrate with node and provides insightful charts which can enable us to visualize network traffic and observe bottlenecks.
 
 <img src="readme_img/analytics.png" width="800">
+
+# Third Party Service Api
+api | description
+--- | ---
+pusher | real-time data changes monitoring
+newrelic | application performance monitoring analytics
 
 # Third Party Components 
 library | description
@@ -460,3 +479,7 @@ https://github.com/airbnb/javascript
 https://github.com/hapijs/boom/blob/master/API.md
 
 https://hackernoon.com/using-mongodb-as-a-realtime-database-with-change-streams-213cba1dfc2a
+
+https://docs.newrelic.com/docs/apm/new-relic-apm/getting-started/introduction-new-relic-apm
+
+https://www.soapui.org/learn/functional-testing/api-testing-101.html

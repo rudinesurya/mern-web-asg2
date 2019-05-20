@@ -57,6 +57,13 @@ describe('Authentication Test Suite', function () {
       const res = await exec();
       res.status.should.equal(422);
     });
+
+    it('should return 422. password do not match', async () => {
+      payload.password = 'secret';
+      payload.password2 = 'something else';
+      const res = await exec();
+      res.status.should.equal(422);
+    });
   });
 
   describe('Login', () => {
